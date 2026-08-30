@@ -31,6 +31,9 @@
     .empty { background: transparent; border: none; box-shadow: none; }
     .loading-msg { text-align: center; color: #888; font-weight: 700; padding: 20px; }
 
+    /* 하단 회색 요약 텍스트 스타일 */
+    .calendar-total-summary { text-align: center; color: #9CA3AF; font-size: 0.85rem; font-weight: 600; margin: 25px 0 10px 0; letter-spacing: -0.3px; }
+
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .bottom-nav a.active { color: #2563EB; }
@@ -52,6 +55,7 @@
 
   <div id="loading-indicator" class="loading-msg">달력 정보 동기화 중... ⏳</div>
   <div class="grid" id="calendar-grid" style="display:none;"></div>
+  <div id="calendar-summary" class="calendar-total-summary"></div>
 
   <nav class="bottom-nav">
     <a href="index.html"><span>HOME</span></a>
@@ -68,6 +72,7 @@
 
     const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
     const calendarGrid = document.getElementById('calendar-grid');
+    const calendarSummary = document.getElementById('calendar-summary');
     const monthInput = document.getElementById('month-input');
     let currentDate = new Date(); 
     let allGigs = [];
@@ -91,6 +96,9 @@
       const firstDayIndex = new Date(year, month, 1).getDay();
       const lastDate = new Date(year, month + 1, 0).getDate();
 
+      let monthGigCount = 0;
+      let monthTotalCost = 0;
+
       for (let i = 0; i < firstDayIndex; i++) html += `<div class="day empty"></div>`;
       for (let i = 1; i <= lastDate; i++) {
         const currentDayStr = `${year}-${monthString}-${String(i).padStart(2, '0')}`;
@@ -101,6 +109,8 @@
         });
         
         if (gigOnThisDay) {
+          monthGigCount++;
+          monthTotalCost += Number(gigOnThisDay.price) || 0;
           html += `
             <a href="detail.html?id=${gigOnThisDay.id}" class="has-gig">
               <span class="day-num">${i}</span>
@@ -112,6 +122,13 @@
         }
       }
       calendarGrid.innerHTML = html;
+
+      // 하단 월별 합계 표시
+      if (monthGigCount > 0) {
+        calendarSummary.innerText = `이 달 총 ${monthGigCount}회 관람 · ₩ ${monthTotalCost.toLocaleString()}`;
+      } else {
+        calendarSummary.innerText = `이 달 관람한 공연이 없습니다.`;
+      }
     }
 
     document.getElementById('prev-btn').addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(currentDate); });
