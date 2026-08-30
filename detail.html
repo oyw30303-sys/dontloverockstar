@@ -3,101 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>상세 후기</title>
+  <title>공연 상세</title>
   <style>
-    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 0 20px 0; }
+    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 70px 20px 100px 20px; }
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
     .back-btn { color: #111; text-decoration: none; font-size: 1.5rem; font-weight: 900; margin-right: 15px; }
+    header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; }
+
+    .detail-card { background: #fff; border: 2px solid #111; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0px #111; margin-bottom: 20px; }
+    .title { font-size: 1.4rem; font-weight: 900; margin: 0 0 10px 0; }
+    .price { font-size: 1.1rem; color: #2563EB; font-weight: 800; margin-bottom: 16px; }
+    .info-row { font-size: 0.95rem; font-weight: 700; color: #555; margin-bottom: 8px; display: flex; gap: 8px; }
+    .review-box { background: #F9FAFB; border: 2px solid #111; border-radius: 12px; padding: 16px; margin-top: 20px; font-weight: 600; line-height: 1.6; white-space: pre-wrap; }
+
+    .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+    .action-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 900; border: 2px solid #111; text-align: center; text-decoration: none; cursor: pointer; }
+    .edit-btn { background: #D9F99D; color: #111; box-shadow: 3px 3px 0px #111; }
+    .delete-btn { background: #FEE2E2; color: #DC2626; box-shadow: 3px 3px 0px #111; }
+    .action-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+    .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bottom-nav a.active { color: #2563EB; }
     
-    .hero { padding: 35px 20px; border-bottom: 2px solid #111; background-color: #fff; }
-    .artist-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .artist-badge { background: #D9F99D; color: #111; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; font-weight: 900; border: 2px solid #111; }
-    h1 { font-size: 1.9rem; font-weight: 900; margin: 0 0 25px 0; line-height: 1.3; }
-    
-    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 2px solid #111; border-radius: 12px; overflow: hidden; }
-    .meta-item { background: #fff; padding: 15px; display: flex; flex-direction: column; border-right: 2px solid #111; border-bottom: 2px solid #111; }
-    .meta-item:nth-child(2n) { border-right: none; }
-    .meta-item:last-child { border-bottom: none; grid-column: 1 / -1; } 
-    .meta-item span { color: #555; font-size: 0.75rem; margin-bottom: 4px; font-weight: 800; letter-spacing: 1px; }
-    .meta-item strong { color: #111; font-size: 1rem; font-weight: 800; }
-    .meta-item .price { color: #2563EB; font-size: 1.2rem; font-weight: 900; }
-    
-    .review-content { padding: 30px 20px; line-height: 1.8; font-size: 1.1rem; font-weight: 600; color: #222; white-space: pre-wrap; }
-    
-    .action-buttons { display: flex; gap: 15px; margin: 0 20px 40px 20px; }
-    .btn-hip { flex: 1; text-align: center; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; box-shadow: 4px 4px 0px #111; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; transition: transform 0.1s, box-shadow 0.1s; }
-    .btn-hip:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; }
-    
-    .edit-btn { background: #D9F99D; color: #111; }
-    .delete-btn { background: #FF4A4A; color: #fff; }
-    .loading-msg { padding: 40px 20px; font-weight: 800; color: #2563EB; text-align: center; }
+    /* 그림자 없앤 + 버튼 스타일 */
+    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: none; transition: transform 0.1s; }
+    .bottom-nav .add-btn:active { transform: translate(2px, 2px); }
+
+    .loading-msg { text-align: center; font-weight: 800; margin-top: 50px; color: #888; }
   </style>
 </head>
 <body>
   <header>
     <a href="index.html" class="back-btn">←</a>
+    <h1>ARCHIVE DETAIL</h1>
   </header>
 
-  <div id="content-container">
-    <div class="loading-msg">정보를 불러오는 중입니다... ⏳</div>
-  </div>
-  
-  <div class="action-buttons" id="action-buttons" style="display:none;">
-    <a href="#" id="edit-btn" class="btn-hip edit-btn">기록 수정 ✏️</a>
-    <button id="delete-btn" class="btn-hip delete-btn">기록 삭제 🗑️</button>
-  </div>
+  <div id="content" class="loading-msg">정보를 불러오는 중... ⏳</div>
+
+  <nav class="bottom-nav">
+    <a href="index.html"><span>HOME</span></a>
+    <a href="artist.html"><span>ARTIST</span></a>
+    <a href="add.html" class="add-btn">+</a>
+    <a href="calendar.html"><span>CALENDAR</span></a>
+  </nav>
 
   <script>
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
     const params = new URLSearchParams(window.location.search);
     const gigId = params.get('id');
+    const container = document.getElementById('content');
 
     fetch(scriptUrl)
       .then(res => res.json())
       .then(gigs => {
         const gig = gigs.find(g => String(g.id) === String(gigId));
         if (gig) {
-          const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
-          const artistBadgesHtml = artistArray.map(a => `<span class="artist-badge">${a}</span>`).join('');
-          const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : '-';
-
-          document.getElementById('content-container').innerHTML = `
-            <div class="hero">
-              <div class="artist-group">${artistBadgesHtml}</div>
-              <h1>${gig.title}</h1>
-              <div class="meta-grid">
-                <div class="meta-item"><span>DATE</span><strong>${formattedDate}</strong></div>
-                <div class="meta-item"><span>LOCATION</span><strong>${gig.location || '-'}</strong></div>
-                <div class="meta-item"><span>PRICE</span><strong class="price">₩ ${Number(gig.price || 0).toLocaleString()}</strong></div>
+          const formattedDate = gig.date ? String(gig.date).substring(0, 10).replace(/-/g, '.') : '';
+          const formattedPrice = gig.price ? Number(gig.price).toLocaleString() : '0';
+          
+          container.innerHTML = `
+            <div class="detail-card">
+              <h2 class="title">${gig.title}</h2>
+              <div class="price">₩ ${formattedPrice}</div>
+              <div class="info-row"><span>🎤 아티스트:</span> <strong>${gig.artist || ''}</strong></div>
+              <div class="info-row"><span>📅 날짜:</span> <strong>${formattedDate}</strong></div>
+              <div class="info-row"><span>📍 장소:</span> <strong>${gig.location || ''}</strong></div>
+              <div class="review-box">${gig.review || '작성된 후기가 없습니다.'}</div>
+              
+              <div class="btn-group">
+                <a href="edit.html?id=${gig.id}" class="action-btn edit-btn">수정하기</a>
+                <button onclick="deleteGig('${gig.id}')" class="action-btn delete-btn">삭제하기</button>
               </div>
             </div>
-            <div class="review-content">${gig.review || '작성된 후기가 없습니다.'}</div>
           `;
-          
-          document.getElementById('edit-btn').href = `edit.html?id=${gig.id}`;
-          document.getElementById('action-buttons').style.display = 'flex';
         } else {
-          document.getElementById('content-container').innerHTML = '<div class="loading-msg">존재하지 않는 기록입니다.</div>';
+          container.innerHTML = '<div class="loading-msg">해당 기록을 찾을 수 없습니다. 😢</div>';
         }
       });
 
-    document.getElementById('delete-btn').addEventListener('click', () => {
-      if (confirm("정말로 이 공연 기록을 삭제할까요? 🥺")) {
-        const btn = document.getElementById('delete-btn');
-        btn.innerText = "삭제 중...⏳";
-        
+    function deleteGig(id) {
+      if (confirm("정말 이 공연 기록을 삭제하시겠습니까?")) {
         fetch(scriptUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({ action: "delete", id: gigId })
+          body: JSON.stringify({ action: "delete", id: id })
         })
         .then(res => res.json())
         .then(data => {
-          alert("삭제되었습니다!");
           window.location.href = 'index.html';
+        })
+        .catch(err => {
+          alert("삭제에 실패했습니다. 다시 시도해주세요.");
         });
       }
-    });
+    }
   </script>
 </body>
 </html>

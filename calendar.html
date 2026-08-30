@@ -18,11 +18,9 @@
     .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
     .day-name { text-align: center; font-size: 0.8rem; color: #111; padding-bottom: 10px; font-weight: 800; }
     
-    /* 일반 날짜 칸: 글자 크기를 살짝 줄임 (0.9rem) */
     .day { background: #fff; aspect-ratio: 1 / 1.1; border-radius: 8px; padding: 6px; position: relative; display: flex; flex-direction: column; border: 2px solid #111; box-shadow: 2px 2px 0px #111; }
     .day-num { font-size: 0.9rem; color: #111; font-weight: 800; }
     
-    /* 공연 본 날 칸: 파란색 배경 채우고 글자는 하얗게, 점(dot)은 코드에서 아예 뺐어! */
     .has-gig { background: #2563EB; border: 2px solid #111; box-shadow: 2px 2px 0px #111; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; padding: 6px; aspect-ratio: 1 / 1.1; border-radius: 8px; }
     .has-gig .day-num { color: #fff; font-size: 0.9rem; }
     
@@ -32,7 +30,10 @@
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .bottom-nav a.active { color: #2563EB; }
-    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: 3px 3px 0px #111; }
+    
+    /* 그림자 없앤 + 버튼 스타일 */
+    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: none; transition: transform 0.1s; }
+    .bottom-nav .add-btn:active { transform: translate(2px, 2px); }
   </style>
 </head>
 <body>
@@ -92,7 +93,6 @@
         });
         
         if (gigOnThisDay) {
-          // 노란 동그라미(gig-dot) 태그는 싹 빼버리고 파란 배경 클래스만 적용!
           html += `<a href="detail.html?id=${gigOnThisDay.id}" class="has-gig"><span class="day-num">${i}</span></a>`;
         } else {
           html += `<div class="day"><span class="day-num">${i}</span></div>`;

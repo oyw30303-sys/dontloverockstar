@@ -31,8 +31,10 @@
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: color 0.2s; }
     .bottom-nav a.active { color: #2563EB; }
-    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: 3px 3px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
-    .bottom-nav .add-btn:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #111; }
+    
+    /* 그림자 없앤 + 버튼 스타일 */
+    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: none; transition: transform 0.1s; }
+    .bottom-nav .add-btn:active { transform: translate(2px, 2px); }
   </style>
 </head>
 <body>
