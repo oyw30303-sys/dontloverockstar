@@ -51,7 +51,7 @@
   </nav>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyJ6jZDpg6sL33-GW8RBDzTMJ5Xp9CJbJ6o-OrcvceKMyVG1DdxGA2IKJblVbgu1T-x/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
     const artistCloud = document.getElementById('artist-cloud');
     const cardList = document.getElementById('card-list');
     
@@ -64,7 +64,7 @@
         let artistCounts = {};
         
         gigs.forEach(gig => {
-          let arr = gig.artist ? gig.artist.split(',').map(a => a.trim()).filter(a => a !== "") : [];
+          let arr = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
           arr.forEach(a => { artistCounts[a] = (artistCounts[a] || 0) + 1; });
         });
 
@@ -93,20 +93,20 @@
       clickedBtn.classList.add('active');
 
       const filteredGigs = allGigs.filter(gig => {
-        let arr = gig.artist ? gig.artist.split(',').map(a => a.trim()) : [];
+        let arr = gig.artist ? String(gig.artist).split(',').map(a => a.trim()) : [];
         return arr.includes(artistName);
       });
 
       cardList.innerHTML = '';
       filteredGigs.forEach(gig => {
-        const formattedDate = gig.date ? gig.date.substring(0,10).replace(/-/g, '.') : ''; 
-        const artistBadgesHtml = gig.artist.split(',').map(a => `<span class="artist-tag">${a.trim()}</span>`).join('');
+        const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 
+        const artistBadgesHtml = gig.artist ? String(gig.artist).split(',').map(a => `<span class="artist-tag">${a.trim()}</span>`).join('') : '';
         
         cardList.innerHTML += `
           <a href="detail.html?id=${gig.id}" class="record-card">
             <div class="card-header"><h2 class="card-title">${gig.title}</h2><span class="price">₩ ${Number(gig.price || 0).toLocaleString()}</span></div>
             <div class="artist-group">${artistBadgesHtml}</div>
-            <div class="card-info"><span>📅 ${formattedDate.substring(2)}</span> <span>📍 ${gig.location}</span></div>
+            <div class="card-info"><span>📅 ${formattedDate.substring(2)}</span> <span>📍 ${gig.location || ''}</span></div>
           </a>
         `;
       });
