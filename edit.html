@@ -15,10 +15,10 @@
     .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
     
-    .form-group input, .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
-    .form-group input:focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #D9F99D; transform: translate(-2px, -2px); }
+    .form-group input, .form-group textarea, input[type="date"] { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; font-family: inherit; }
+    .form-group input:focus, .form-group textarea:focus, input[type="date"]:focus { box-shadow: 4px 4px 0px #D9F99D; transform: translate(-2px, -2px); }
     
-    input[type="date"] { cursor: pointer; color: #111; font-family: inherit; width: 100%; box-sizing: border-box; }
+    input[type="date"] { cursor: pointer; }
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
 
     .save-btn { display: block; width: 100%; background: #D9F99D; color: #111; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 20px; box-shadow: 4px 4px 0px #111; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
@@ -70,7 +70,6 @@
           document.getElementById('g-title').value = gig.title || '';
           document.getElementById('g-artist').value = gig.artist || '';
           document.getElementById('g-date').value = gig.date ? String(gig.date).substring(0,10) : '';
-          // 불러올 때도 기존 가격에 콤마가 예쁘게 찍혀서 나오도록 변환
           document.getElementById('g-price').value = gig.price ? Number(gig.price).toLocaleString() : '';
           document.getElementById('g-location').value = gig.location || '';
           document.getElementById('g-review').value = gig.review || '';
