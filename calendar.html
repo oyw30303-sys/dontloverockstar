@@ -20,7 +20,7 @@
     .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
     .day-name { text-align: center; font-size: 0.8rem; color: #555; padding-bottom: 10px; font-weight: 800; }
     
-    /* 빈 날짜: 클릭 시 새 기록 추가 */
+    /* 빈 날짜: 클릭 시 해당 날짜로 새 기록 추가 */
     .day { background: #fff; aspect-ratio: 1 / 1.15; border-radius: 8px; padding: 6px; position: relative; display: flex; flex-direction: column; border: 2px solid #111; box-shadow: 2px 2px 0px #111; text-decoration: none; color: inherit; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
     .day:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
     .day-num { font-size: 0.9rem; color: #111; font-weight: 700; }
@@ -34,7 +34,10 @@
     .empty { background: transparent; border: none; box-shadow: none; pointer-events: none; }
     .loading-msg { text-align: center; color: #888; font-weight: 700; padding: 20px; }
 
-    .calendar-total-summary { text-align: center; color: #9CA3AF; font-size: 0.85rem; font-weight: 600; margin: 25px 0 10px 0; letter-spacing: -0.3px; }
+    /* 하단 회색 요약 및 팁 안내 영역 */
+    .calendar-footer { margin: 25px 0 10px 0; text-align: center; display: flex; flex-direction: column; gap: 8px; }
+    .calendar-total-summary { color: #6B7280; font-size: 0.9rem; font-weight: 700; letter-spacing: -0.3px; }
+    .calendar-tip { color: #9CA3AF; font-size: 0.8rem; font-weight: 600; letter-spacing: -0.3px; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -57,7 +60,11 @@
 
   <div id="loading-indicator" class="loading-msg">달력 정보 동기화 중... ⏳</div>
   <div class="grid" id="calendar-grid" style="display:none;"></div>
-  <div id="calendar-summary" class="calendar-total-summary"></div>
+  
+  <div class="calendar-footer">
+    <div id="calendar-summary" class="calendar-total-summary"></div>
+    <div class="calendar-tip">💡 빈 날짜를 누르면 그날의 공연을 바로 기록할 수 있어요 ⚡</div>
+  </div>
 
   <nav class="bottom-nav">
     <a href="index.html"><span>HOME</span></a>
@@ -128,7 +135,6 @@
             </a>
           `;
         } else {
-          // 빈 날짜 클릭 시 add.html에 날짜를 전달
           html += `
             <a href="add.html?date=${currentDayStr}" class="day">
               <span class="day-num">${i}</span>
