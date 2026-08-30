@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>기록 추가</title>
+  <style>
+    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 20px 90px 20px; }
+    header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
+    .back-btn { color: #111; text-decoration: none; font-size: 1.5rem; font-weight: 900; margin-right: 15px; }
+    header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; }
+    
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
+    .form-group input, .form-group textarea { width: 100%; box-sizing: border-box; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
+    input[type="date"] { cursor: pointer; color: #111; font-family: inherit; }
+    .form-group textarea { height: 150px; resize: none; line-height: 1.5; }
+    
+    .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; text-decoration: none; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 30px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+    .save-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #2563EB; }
+    .save-btn:disabled { background: #888; color: #eee; cursor: not-allowed; box-shadow: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="back-btn">←</a>
+    <h1>NEW ARCHIVE</h1>
+  </header>
+
+  <form id="gig-form">
+    <div class="form-group"><label>공연 이름</label><input type="text" id="g-title" placeholder="예: 단독 콘서트" required></div>
+    <div class="form-group"><label>출연 아티스트</label><input type="text" id="g-artist" placeholder="예: 신인류, 실리카겔 (쉼표 구분)" required></div>
+    <div class="form-group" style="display: flex; gap: 15px;">
+      <div style="flex: 1;"><label>날짜</label><input type="date" id="g-date" onclick="try{this.showPicker();}catch(e){}" required></div>
+      <div style="flex: 1;"><label>가격 (원)</label><input type="number" id="g-price" placeholder="88000" required></div>
+    </div>
+    <div class="form-group"><label>장소</label><input type="text" id="g-location" placeholder="예: 클럽 헤비"></div>
+    <div class="form-group"><label>공연 후기</label><textarea id="g-review" placeholder="무대 연출, 사운드, 기억에 남는 순간들을 자유롭게 적어주세요 🤘"></textarea></div>
+    <button type="submit" class="save-btn" id="save-btn">기록 저장하기</button>
+  </form>
+
+  <script>
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyJ6jZDpg6sL33-GW8RBDzTMJ5Xp9CJbJ6o-OrcvceKMyVG1DdxGA2IKJblVbgu1T-x/exec";
+
+    document.getElementById('gig-form').addEventListener('submit', function(e) {
+      e.preventDefault(); 
+      
+      const btn = document.getElementById('save-btn');
+      btn.innerText = "시트에 저장 중... ⏳";
+      btn.disabled = true;
+
+      const newGig = {
+        title: document.getElementById('g-title').value,
+        artist: document.getElementById('g-artist').value,
+        date: document.getElementById('g-date').value,
+        price: document.getElementById('g-price').value,
+        location: document.getElementById('g-location').value,
+        review: document.getElementById('g-review').value
+      };
+
+      fetch(scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(newGig)
+      })
+      .then(res => res.json())
+      .then(data => {
+        window.location.href = 'index.html';
+      })
+      .catch(error => {
+        alert("저장에 실패했습니다. 다시 시도해주세요.");
+        btn.innerText = "기록 저장하기";
+        btn.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>

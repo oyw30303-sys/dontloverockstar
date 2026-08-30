@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ROCK ARCHIVE</title>
+  <style>
+    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 20px 90px 20px; }
+    header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
+    header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
+    
+    .summary-box { background: #D9F99D; padding: 20px; border-radius: 16px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; }
+    .summary-box p { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
+    .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; }
+    
+    .card-list { display: flex; flex-direction: column; gap: 20px; }
+    .record-card { background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; border: 2px solid #111; box-shadow: 4px 4px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
+    .record-card:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; } 
+    
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .card-title { font-size: 1.2rem; font-weight: 800; margin: 0; color: #111; line-height: 1.3; }
+    .price { color: #2563EB; font-weight: 800; }
+    
+    .artist-group { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+    .artist { background: #2563EB; color: #fff; font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; border: 1.5px solid #111; }
+    
+    .card-info { color: #555; font-size: 0.9rem; margin: 4px 0; display: flex; gap: 10px; font-weight: 600; }
+    
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+    .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: color 0.2s; }
+    .bottom-nav a.active { color: #2563EB; }
+    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: 3px 3px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
+    .bottom-nav .add-btn:active { transform: translate(3px, 3px); box-shadow: 0px 0px 0px #111; }
+    .empty-msg { text-align: center; color: #888; font-weight: 700; padding: 40px 0; }
+  </style>
+</head>
+<body>
+  <header><h1>ROCK ARCHIVE</h1></header>
+
+  <div class="content">
+    <div class="summary-box">
+      <p>올해 공연에 태운 돈 💸</p>
+      <strong id="total-price">₩ 0</strong>
+    </div>
+    <div class="card-list" id="card-list">
+      <div class="empty-msg">데이터를 불러오는 중입니다... ⏳</div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="active"><span>HOME</span></a>
+    <a href="artist.html"><span>ARTIST</span></a>
+    <a href="add.html" class="add-btn">+</a>
+    <a href="calendar.html"><span>CALENDAR</span></a>
+  </nav>
+
+  <script>
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyJ6jZDpg6sL33-GW8RBDzTMJ5Xp9CJbJ6o-OrcvceKMyVG1DdxGA2IKJblVbgu1T-x/exec";
+    const cardList = document.getElementById('card-list');
+
+    fetch(scriptUrl)
+      .then(res => res.json())
+      .then(gigs => {
+        if (gigs.length === 0) {
+          cardList.innerHTML = '<div class="empty-msg">아직 기록된 공연이 없어요!<br>+ 버튼을 눌러 추가해보세요. 🤘</div>';
+          return;
+        }
+
+        let total = 0;
+        let html = '';
+        
+        gigs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        gigs.forEach(gig => {
+          total += Number(gig.price) || 0;
+          const formattedDate = gig.date ? gig.date.substring(0,10).replace(/-/g, '.') : ''; 
+          
+          const artistArray = gig.artist ? gig.artist.split(',').map(a => a.trim()).filter(a => a !== "") : [];
+          const artistBadgesHtml = artistArray.map(a => `<span class="artist">${a}</span>`).join('');
+          
+          html += `
+            <a href="detail.html?id=${gig.id}" class="record-card">
+              <div class="card-header">
+                <h2 class="card-title">${gig.title}</h2>
+                <span class="price">₩ ${Number(gig.price || 0).toLocaleString()}</span>
+              </div>
+              <div class="artist-group">${artistBadgesHtml}</div>
+              <div class="card-info"><span>📅 ${formattedDate.substring(2)}</span> <span>📍 ${gig.location}</span></div>
+            </a>
+          `;
+        });
+        
+        cardList.innerHTML = html;
+        document.getElementById('total-price').innerText = `₩ ${total.toLocaleString()}`;
+      })
+      .catch(err => {
+        cardList.innerHTML = '<div class="empty-msg">데이터를 불러오는데 실패했습니다. 😢</div>';
+      });
+  </script>
+</body>
+</html>
