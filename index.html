@@ -9,9 +9,17 @@
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
     header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
     
-    .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; }
-    .summary-box p { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
-    .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; }
+    /* 상단 요약 박스 */
+    .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; position: relative; }
+    
+    /* 문구 래퍼: 터치하면 연도 선택창이 뜨도록 투명 select를 위에 겹침 */
+    .summary-title-wrap { position: relative; display: inline-block; cursor: pointer; }
+    .summary-title { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
+    
+    /* 완전히 투명하게 문구 위에 덮는 select 태그 */
+    .year-select-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 1rem; }
+    
+    .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; display: block; }
     
     .card-list { display: flex; flex-direction: column; gap: 20px; }
     .record-card { background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; border: 2px solid #111; box-shadow: 4px 4px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
@@ -30,7 +38,6 @@
     .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: color 0.2s; }
     .bottom-nav a.active { color: #2563EB; }
     
-    /* 그림자 없앤 기본 + 버튼 */
     .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: none; transition: transform 0.1s; }
     .bottom-nav .add-btn:active { transform: translate(2px, 2px); }
 
@@ -42,9 +49,14 @@
 
   <div class="content">
     <div class="summary-box">
-      <p>올해 공연에 태운 돈 💸</p>
+      <div class="summary-title-wrap">
+        <p class="summary-title" id="summary-text">올해 공연에 태운 돈 💸</p>
+        <!-- 터치 시 뜨는 10년치 연도 선택 드롭다운 -->
+        <select id="year-select" class="year-select-overlay"></select>
+      </div>
       <strong id="total-price">₩ 0</strong>
     </div>
+    
     <div class="card-list" id="card-list">
       <div class="empty-msg">데이터를 불러오는 중입니다... ⏳</div>
     </div>
@@ -60,46 +72,88 @@
   <script>
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
     const cardList = document.getElementById('card-list');
+    const yearSelect = document.getElementById('year-select');
+    const summaryText = document.getElementById('summary-text');
+    const totalPriceEl = document.getElementById('total-price');
+
+    let allGigs = [];
+    const currentYear = new Date().getFullYear();
+
+    // 10년 전까지만 연도 옵션 생성
+    function initYearDropdown() {
+      let optionsHtml = '';
+      for (let y = currentYear; y >= currentYear - 10; y--) {
+        const label = (y === currentYear) ? `올해 (${y}년)` : `${y}년`;
+        optionsHtml += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${label}</option>`;
+      }
+      yearSelect.innerHTML = optionsHtml;
+    }
+
+    initYearDropdown();
 
     fetch(scriptUrl)
       .then(res => res.json())
       .then(gigs => {
         if (!gigs || gigs.length === 0) {
           cardList.innerHTML = '<div class="empty-msg">아직 기록된 공연이 없어요!<br>+ 버튼을 눌러 추가해보세요. 🤘</div>';
+          totalPriceEl.innerText = "₩ 0";
           return;
         }
 
-        // 공연 날짜 기준 최신순 정렬
-        gigs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        allGigs = gigs;
+        allGigs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-        let total = 0;
-        let html = '';
-        
-        gigs.forEach(gig => {
-          total += Number(gig.price) || 0;
-          const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 
-          
-          const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
-          const artistBadgesHtml = artistArray.map(a => `<span class="artist">${a}</span>`).join('');
-          
-          html += `
-            <a href="detail.html?id=${gig.id}" class="record-card">
-              <div class="card-header">
-                <h2 class="card-title">${gig.title}</h2>
-                <span class="price">₩ ${Number(gig.price || 0).toLocaleString()}</span>
-              </div>
-              <div class="artist-group">${artistBadgesHtml}</div>
-              <div class="card-info"><span>📅 ${formattedDate.substring(2)}</span> <span>📍 ${gig.location || ''}</span></div>
-            </a>
-          `;
-        });
-        
-        cardList.innerHTML = html;
-        document.getElementById('total-price').innerText = `₩ ${total.toLocaleString()}`;
+        updateDashboard(currentYear);
       })
       .catch(err => {
         cardList.innerHTML = '<div class="empty-msg">데이터를 불러오는데 실패했습니다. 😢</div>';
       });
+
+    // 선택된 연도에 따라 문구와 금액 갱신
+    function updateDashboard(selectedYear) {
+      let yearTotal = 0;
+      
+      allGigs.forEach(gig => {
+        if (!gig.date) return;
+        const gigYear = new Date(gig.date).getFullYear();
+        if (gigYear === Number(selectedYear)) {
+          yearTotal += Number(gig.price) || 0;
+        }
+      });
+
+      // 올해면 '올해 공연에 태운 돈 💸', 다른 연도면 '2025년 공연에 태운 돈 💸'
+      if (Number(selectedYear) === currentYear) {
+        summaryText.innerText = "올해 공연에 태운 돈 💸";
+      } else {
+        summaryText.innerText = `${selectedYear}년 공연에 태운 돈 💸`;
+      }
+
+      totalPriceEl.innerText = `₩ ${yearTotal.toLocaleString()}`;
+
+      // 목록 렌더링
+      let html = '';
+      allGigs.forEach(gig => {
+        const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 
+        const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
+        const artistBadgesHtml = artistArray.map(a => `<span class="artist">${a}</span>`).join('');
+        
+        html += `
+          <a href="detail.html?id=${gig.id}" class="record-card">
+            <div class="card-header">
+              <h2 class="card-title">${gig.title}</h2>
+              <span class="price">₩ ${Number(gig.price || 0).toLocaleString()}</span>
+            </div>
+            <div class="artist-group">${artistBadgesHtml}</div>
+            <div class="card-info"><span>📅 ${formattedDate.substring(2)}</span> <span>📍 ${gig.location || ''}</span></div>
+          </a>
+        `;
+      });
+      cardList.innerHTML = html;
+    }
+
+    yearSelect.addEventListener('change', (e) => {
+      updateDashboard(e.target.value);
+    });
   </script>
 </body>
 </html>
