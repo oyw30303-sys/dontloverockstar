@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ROCK ARCHIVE</title>
   <style>
-    /* 상단 헤더와 총 합계 박스가 딱 붙지 않도록 상단 패딩을 넉넉하게 줬어! */
     body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 80px 20px 90px 20px; }
-    
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
     header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
     
-    /* 총 합계 박스 위아래 간격(margin-top) 줍니다! */
     .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; }
     .summary-box p { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
     .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; }
@@ -68,6 +65,9 @@
           cardList.innerHTML = '<div class="empty-msg">아직 기록된 공연이 없어요!<br>+ 버튼을 눌러 추가해보세요. 🤘</div>';
           return;
         }
+
+        // 공연 날짜(date)를 기준으로 최신순(내림차순, 최근 날짜가 위로) 정렬!
+        gigs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         let total = 0;
         let html = '';
