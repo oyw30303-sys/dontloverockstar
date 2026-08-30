@@ -14,15 +14,11 @@
     
     .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
-    .form-group input, .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 14px 12px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
+    .form-group input, .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
     .form-group input:focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #D9F99D; transform: translate(-2px, -2px); }
     
-    input[type="date"] { cursor: pointer; color: #111; font-family: inherit; font-size: 0.9rem; }
+    input[type="date"] { cursor: pointer; color: #111; font-family: inherit; }
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
-    
-    .row-group { display: flex; gap: 10px; width: 100%; }
-    .row-group .date-group { flex: 0.9; }
-    .row-group .price-group { flex: 1.1; }
 
     .save-btn { display: block; width: 100%; background: #D9F99D; color: #111; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 20px; box-shadow: 4px 4px 0px #111; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
     .save-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; }
@@ -42,10 +38,9 @@
     <div class="form-group"><label>공연 이름</label><input type="text" id="g-title" required></div>
     <div class="form-group"><label>출연 아티스트</label><input type="text" id="g-artist" required></div>
     
-    <div class="row-group">
-      <div class="form-group date-group"><label>날짜</label><input type="date" id="g-date" onclick="try{this.showPicker();}catch(e){}" required></div>
-      <div class="form-group price-group"><label>가격 (원)</label><input type="number" id="g-price" required></div>
-    </div>
+    <!-- 세로로 뚝 떨어지게 배치 -->
+    <div class="form-group"><label>날짜</label><input type="date" id="g-date" onclick="try{this.showPicker();}catch(e){}" required></div>
+    <div class="form-group"><label>가격 (원)</label><input type="number" id="g-price" required></div>
 
     <div class="form-group"><label>장소</label><input type="text" id="g-location"></div>
     <div class="form-group"><label>공연 후기</label><textarea id="g-review"></textarea></div>
