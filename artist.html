@@ -26,13 +26,15 @@
     .artist-tag { background: #2563EB; color: #fff; font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; border: 1.5px solid #111; }
     .card-info { color: #555; font-size: 0.9rem; margin: 4px 0; display: flex; gap: 10px; font-weight: 600; }
     
+    /* 젤 밑에 작고 은은하게 들어가는 회색 텍스트 총합 스타일 */
+    .artist-total-summary { text-align: center; color: #9CA3AF; font-size: 0.85rem; font-weight: 600; margin: 15px 0 25px 0; letter-spacing: -0.3px; }
+
     .empty-msg { text-align: center; color: #888; font-weight: 700; padding: 40px 0; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
     .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: color 0.2s; }
     .bottom-nav a.active { color: #2563EB; }
     
-    /* 그림자 없앤 + 버튼 스타일 */
     .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: none; transition: transform 0.1s; }
     .bottom-nav .add-btn:active { transform: translate(2px, 2px); }
   </style>
@@ -99,12 +101,18 @@
         return arr.includes(artistName);
       });
 
-      cardList.innerHTML = '';
+      // 날짜 기준 최신순 정렬
+      filteredGigs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      let totalCost = 0;
+      let html = '';
+
       filteredGigs.forEach(gig => {
+        totalCost += Number(gig.price) || 0;
         const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 
         const artistBadgesHtml = gig.artist ? String(gig.artist).split(',').map(a => `<span class="artist-tag">${a.trim()}</span>`).join('') : '';
         
-        cardList.innerHTML += `
+        html += `
           <a href="detail.html?id=${gig.id}" class="record-card">
             <div class="card-header"><h2 class="card-title">${gig.title}</h2><span class="price">₩ ${Number(gig.price || 0).toLocaleString()}</span></div>
             <div class="artist-group">${artistBadgesHtml}</div>
@@ -112,6 +120,15 @@
           </a>
         `;
       });
+
+      // 목록 젤 밑에 연한 회색으로 총합 텍스트 추가
+      html += `
+        <div class="artist-total-summary">
+          총 ${filteredGigs.length}회 관람 · ₩ ${totalCost.toLocaleString()}
+        </div>
+      `;
+
+      cardList.innerHTML = html;
     }
   </script>
 </body>
