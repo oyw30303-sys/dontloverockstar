@@ -20,7 +20,7 @@
     .save-btn { display: block; width: 100%; background: #D9F99D; color: #111; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 30px; box-shadow: 4px 4px 0px #111; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
     .save-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; }
     .save-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; transform: none; border-color: #888; }
-    .loading-msg { text-align: center; font-weight: 800; margin-bottom: 20px; color: #2563EB; }
+    .loading-msg { text-align: center; font-weight: 800; margin-top: 40px; color: #2563EB; }
   </style>
 </head>
 <body>
@@ -48,33 +48,33 @@
     const params = new URLSearchParams(window.location.search);
     const gigId = params.get('id');
 
-    // 1. 기존 데이터 불러와서 칸 채워넣기
     fetch(scriptUrl)
       .then(res => res.json())
       .then(gigs => {
         const gig = gigs.find(g => g.id === gigId);
         if(gig) {
-          document.getElementById('g-title').value = gig.title;
-          document.getElementById('g-artist').value = gig.artist;
+          document.getElementById('g-title').value = gig.title || '';
+          document.getElementById('g-artist').value = gig.artist || '';
           document.getElementById('g-date').value = gig.date ? gig.date.substring(0,10) : '';
-          document.getElementById('g-price').value = gig.price;
-          document.getElementById('g-location').value = gig.location;
-          document.getElementById('g-review').value = gig.review;
+          document.getElementById('g-price').value = gig.price || '';
+          document.getElementById('g-location').value = gig.location || '';
+          document.getElementById('g-review').value = gig.review || '';
           
           document.getElementById('loading-msg').style.display = 'none';
           document.getElementById('gig-form').style.display = 'block';
+        } else {
+          document.getElementById('loading-msg').innerText = "데이터를 찾을 수 없습니다.";
         }
       });
 
-    // 2. 수정 완료 버튼 누르면 시트로 전송!
     document.getElementById('gig-form').addEventListener('submit', function(e) {
       e.preventDefault(); 
       const btn = document.getElementById('save-btn');
-      btn.innerText = "시트 수정 중... ⏳";
+      btn.innerText = "시트에 덮어쓰는 중... ⏳";
       btn.disabled = true;
 
       const updatedGig = {
-        action: "edit", // 💡 여기가 핵심! 수정해달라고 알려줍니다.
+        action: "edit",
         id: gigId,
         title: document.getElementById('g-title').value,
         artist: document.getElementById('g-artist').value,
@@ -91,7 +91,13 @@
       })
       .then(res => res.json())
       .then(data => {
-        window.location.href = `detail.html?id=${gigId}`; // 수정된 상세 페이지로 이동
+        // 수정 완료 후 즉시 상세 페이지로 이동해서 바뀐 결과 바로 확인!
+        window.location.href = `detail.html?id=${gigId}`;
+      })
+      .catch(err => {
+        alert("수정에 실패했습니다. 다시 시도해주세요.");
+        btn.innerText = "수정 완료하기";
+        btn.disabled = false;
       });
     });
   </script>
