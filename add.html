@@ -15,13 +15,10 @@
     .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
     
-    /* 모든 입력창(텍스트, 숫자, 날짜, 텍스트area) 공통 스타일 적용으로 크기 완전 일치 */
     .form-group input, .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
     .form-group input:focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
     
-    /* 날짜 입력창이 튀어나가지 않도록 너비와 크기를 다른 창들과 똑같이 강제 고정 */
     input[type="date"] { cursor: pointer; color: #111; font-family: inherit; width: 100%; box-sizing: border-box; }
-    
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
 
     .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 20px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
@@ -40,7 +37,8 @@
     <div class="form-group"><label>출연 아티스트</label><input type="text" id="g-artist" placeholder="예: 신인류, 실리카겔 (쉼표 구분)" required></div>
     
     <div class="form-group"><label>날짜</label><input type="date" id="g-date" required></div>
-    <div class="form-group"><label>가격 (원)</label><input type="number" id="g-price" placeholder="88000" required></div>
+    <!-- 가격 입력란 (타입을 text로 바꿔서 콤마 포맷팅이 원활하게 들어가도록 함) -->
+    <div class="form-group"><label>가격 (원)</label><input type="text" id="g-price" placeholder="88,000" inputmode="numeric" required></div>
 
     <div class="form-group"><label>장소</label><input type="text" id="g-location" placeholder="예: 클럽 헤비"></div>
     <div class="form-group"><label>공연 후기</label><textarea id="g-review" placeholder="무대 연출, 사운드, 기억에 남는 순간들을 자유롭게 적어주세요 🤘"></textarea></div>
@@ -51,6 +49,16 @@
   <script>
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
 
+    // 가격 입력할 때 실시간으로 콤마 찍어주는 이벤트
+    const priceInput = document.getElementById('g-price');
+    priceInput.addEventListener('input', function (e) {
+      let value = e.target.value.replace(/[^0-9]/g, ''); // 숫자 외에 다 지우기
+      if (value) {
+        value = Number(value).toLocaleString(); // 3자리마다 콤마 추가
+      }
+      e.target.value = value;
+    });
+
     document.getElementById('gig-form').addEventListener('submit', function(e) {
       e.preventDefault(); 
       
@@ -58,11 +66,14 @@
       btn.innerText = "시트에 저장 중... ⏳";
       btn.disabled = true;
 
+      // 서버로 보낼 때는 콤마를 제거하고 순수 숫자만 추출해서 보냄
+      const rawPrice = priceInput.value.replace(/,/g, '');
+
       const newGig = {
         title: document.getElementById('g-title').value,
         artist: document.getElementById('g-artist').value,
         date: document.getElementById('g-date').value,
-        price: document.getElementById('g-price').value,
+        price: rawPrice,
         location: document.getElementById('g-location').value,
         review: document.getElementById('g-review').value
       };
