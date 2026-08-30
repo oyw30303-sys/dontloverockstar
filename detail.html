@@ -22,9 +22,6 @@
     
     .divider { height: 2px; background: #eee; margin: 22px 0; }
     
-    .setlist-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 10px; text-align: left; }
-    .setlist-photo { width: 100%; border-radius: 12px; border: 2px solid #111; display: block; margin-bottom: 20px; box-shadow: 2px 2px 0px #111; }
-
     .review-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 8px; text-align: left; }
     .review-content { font-size: 1rem; font-weight: 600; color: #333; line-height: 1.6; white-space: pre-wrap; text-align: left; }
 
@@ -61,9 +58,7 @@
 
   <script>
     const currentUser = localStorage.getItem("rockArchiveUser");
-    if (!currentUser) {
-      window.location.href = "login.html";
-    }
+    if (!currentUser) window.location.href = "login.html";
 
     const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
     const params = new URLSearchParams(window.location.search);
@@ -77,13 +72,6 @@
         if (gig) {
           const formattedDate = gig.date ? String(gig.date).substring(0, 10).replace(/-/g, '.') : '';
           const formattedPrice = gig.price ? Number(gig.price).toLocaleString() : '0';
-          
-          const photoHtml = gig.photo ? `
-            <div class="setlist-section">
-              <label>📜 셋리스트</label>
-              <img src="${gig.photo}" class="setlist-photo" alt="셋리스트 사진">
-            </div>
-          ` : '';
 
           container.innerHTML = `
             <div class="detail-card">
@@ -110,8 +98,6 @@
               
               <div class="divider"></div>
 
-              ${photoHtml}
-              
               <div class="review-section">
                 <label>💬 공연 후기</label>
                 <div class="review-content">${gig.review || '작성된 후기가 없습니다.'}</div>
