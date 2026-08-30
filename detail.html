@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>상세 후기</title>
   <style>
-    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 0 90px 0; }
+    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 0 20px 0; }
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
     .back-btn { color: #111; text-decoration: none; font-size: 1.5rem; font-weight: 900; margin-right: 15px; }
     
@@ -22,29 +22,38 @@
     .meta-item strong { color: #111; font-size: 1rem; font-weight: 800; }
     .meta-item .price { color: #2563EB; font-size: 1.2rem; font-weight: 900; }
     
-    .review-content { padding: 30px 20px; line-height: 1.8; font-size: 1.1rem; font-weight: 500; color: #222; white-space: pre-wrap; }
+    .review-content { padding: 30px 20px; line-height: 1.8; font-size: 1.1rem; font-weight: 600; color: #222; white-space: pre-wrap; }
     
-    .delete-btn { display: block; width: calc(100% - 40px); background: #FF4A4A; color: #fff; text-align: center; padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin: 20px auto; box-shadow: 4px 4px 0px #111; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
-    .delete-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; }
-    .loading-msg { padding: 40px 20px; font-weight: 700; color: #555; }
+    .action-buttons { display: flex; gap: 15px; margin: 0 20px 40px 20px; }
+    .btn-hip { flex: 1; text-align: center; padding: 15px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; box-shadow: 4px 4px 0px #111; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; transition: transform 0.1s, box-shadow 0.1s; }
+    .btn-hip:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; }
+    
+    .edit-btn { background: #D9F99D; color: #111; }
+    .delete-btn { background: #FF4A4A; color: #fff; }
+    .loading-msg { padding: 40px 20px; font-weight: 800; color: #2563EB; text-align: center; }
   </style>
 </head>
 <body>
   <header>
-    <a href="javascript:history.back()" class="back-btn">←</a>
+    <a href="index.html" class="back-btn">←</a>
   </header>
 
   <div id="content-container">
-    <div class="loading-msg">시트에서 정보를 불러오는 중입니다... ⏳</div>
+    <div class="loading-msg">정보를 불러오는 중입니다... ⏳</div>
   </div>
   
-  <button id="delete-btn" class="delete-btn" style="display:none;">이 기록 삭제하기 🗑️</button>
+  <div class="action-buttons" id="action-buttons" style="display:none;">
+    <a href="#" id="edit-btn" class="btn-hip edit-btn">기록 수정 ✏️</a>
+    <button id="delete-btn" class="btn-hip delete-btn">기록 삭제 🗑️</button>
+  </div>
 
   <script>
+    // 언니의 구글 시트 주소
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyJ6jZDpg6sL33-GW8RBDzTMJ5Xp9CJbJ6o-OrcvceKMyVG1DdxGA2IKJblVbgu1T-x/exec";
     const params = new URLSearchParams(window.location.search);
     const gigId = params.get('id');
 
+    // 1. 화면에 데이터 보여주기
     fetch(scriptUrl)
       .then(res => res.json())
       .then(gigs => {
@@ -66,14 +75,31 @@
             </div>
             <div class="review-content">${gig.review || '작성된 후기가 없습니다.'}</div>
           `;
-          document.getElementById('delete-btn').style.display = 'block';
+          
+          document.getElementById('edit-btn').href = `edit.html?id=${gig.id}`;
+          document.getElementById('action-buttons').style.display = 'flex';
         } else {
           document.getElementById('content-container').innerHTML = '<div class="loading-msg">존재하지 않는 기록입니다.</div>';
         }
       });
 
+    // 2. 진짜 삭제 버튼 기능 (스프레드시트로 삭제 명령 보내기)
     document.getElementById('delete-btn').addEventListener('click', () => {
-      alert("스프레드시트 연동 버전에서는 삭제 기능을 추후 업데이트 예정입니다! 🥺\n현재는 구글 시트에서 직접 지워주세요.");
+      if (confirm("이 공연 기록을 시트에서 완전히 지울까요? 🥺")) {
+        const btn = document.getElementById('delete-btn');
+        btn.innerText = "삭제 중...⏳";
+        
+        fetch(scriptUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: "delete", id: gigId })
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert("완벽하게 삭제되었습니다! 🗑️");
+          window.location.href = 'index.html'; // 홈으로 돌아가기
+        });
+      }
     });
   </script>
 </body>
