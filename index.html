@@ -8,8 +8,9 @@
   <style>
     * { box-sizing: border-box; }
     body { background-color: #F4F5F0; color: #111; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; letter-spacing: -0.02em; margin: 0; padding: 80px 20px 90px 20px; }
-    header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
-    header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
+    header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
+    header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
+    .user-tag { font-size: 0.8rem; font-weight: 800; background: #fff; border: 1.5px solid #111; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-family: inherit; }
     
     .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; position: relative; }
     .summary-title-wrap { position: relative; display: inline-block; cursor: pointer; }
@@ -41,7 +42,10 @@
   </style>
 </head>
 <body>
-  <header><h1>ROCK ARCHIVE</h1></header>
+  <header>
+    <h1>ROCK ARCHIVE</h1>
+    <button class="user-tag" onclick="logout()" id="user-badge">👤 로그아웃</button>
+  </header>
 
   <div class="content">
     <div class="summary-box">
@@ -65,7 +69,21 @@
   </nav>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
+    const currentUser = localStorage.getItem("rockArchiveUser");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    document.getElementById('user-badge').innerText = `👤 ${currentUser}`;
+
+    function logout() {
+      if (confirm("로그아웃 하시겠습니까?")) {
+        localStorage.removeItem("rockArchiveUser");
+        window.location.href = "login.html";
+      }
+    }
+
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
     const cardList = document.getElementById('card-list');
     const yearSelect = document.getElementById('year-select');
     const summaryText = document.getElementById('summary-text');
@@ -85,7 +103,7 @@
 
     initYearDropdown();
 
-    fetch(scriptUrl)
+    fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
       .then(gigs => {
         if (!gigs || gigs.length === 0) {

@@ -15,13 +15,16 @@
     .detail-card { background: #fff; border: 2px solid #111; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0px #111; margin-bottom: 20px; }
     .title { font-size: 1.4rem; font-weight: 900; margin: 0 0 20px 0; text-align: center; }
     
-    /* 항목 리스트 레이아웃 */
     .info-list { display: flex; flex-direction: column; gap: 12px; }
     .info-row { font-size: 0.95rem; font-weight: 700; color: #555; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
     .info-label { white-space: nowrap; flex-shrink: 0; color: #444; }
     .info-value { color: #111; font-weight: 800; word-break: break-word; }
     
     .divider { height: 2px; background: #eee; margin: 22px 0; }
+    
+    .setlist-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 10px; text-align: left; }
+    .setlist-photo { width: 100%; border-radius: 12px; border: 2px solid #111; display: block; margin-bottom: 20px; box-shadow: 2px 2px 0px #111; }
+
     .review-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 8px; text-align: left; }
     .review-content { font-size: 1rem; font-weight: 600; color: #333; line-height: 1.6; white-space: pre-wrap; text-align: left; }
 
@@ -57,12 +60,17 @@
   </nav>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
+    const currentUser = localStorage.getItem("rockArchiveUser");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
     const params = new URLSearchParams(window.location.search);
     const gigId = params.get('id');
     const container = document.getElementById('content');
 
-    fetch(scriptUrl)
+    fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
       .then(gigs => {
         const gig = gigs.find(g => String(g.id) === String(gigId));
@@ -70,6 +78,13 @@
           const formattedDate = gig.date ? String(gig.date).substring(0, 10).replace(/-/g, '.') : '';
           const formattedPrice = gig.price ? Number(gig.price).toLocaleString() : '0';
           
+          const photoHtml = gig.photo ? `
+            <div class="setlist-section">
+              <label>📜 셋리스트</label>
+              <img src="${gig.photo}" class="setlist-photo" alt="셋리스트 사진">
+            </div>
+          ` : '';
+
           container.innerHTML = `
             <div class="detail-card">
               <h2 class="title">${gig.title}</h2>
@@ -94,6 +109,8 @@
               </div>
               
               <div class="divider"></div>
+
+              ${photoHtml}
               
               <div class="review-section">
                 <label>💬 공연 후기</label>

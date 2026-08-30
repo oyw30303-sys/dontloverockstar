@@ -16,13 +16,18 @@
     .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
     
-    .form-group input, .form-group textarea, input[type="date"] { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; font-family: inherit; line-height: normal; }
-    .form-group input:focus, .form-group textarea:focus, input[type="date"]:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
+    .form-group input:not([type="file"]), .form-group textarea, input[type="date"] { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; font-family: inherit; line-height: normal; }
+    .form-group input:not([type="file"]):focus, .form-group textarea:focus, input[type="date"]:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
     
     input[type="date"] { cursor: pointer; -webkit-appearance: none; appearance: none; display: block; height: 56px; }
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
 
-    .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 20px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; font-family: inherit; }
+    .file-upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; background: #fff; border: 2px dashed #111; padding: 16px; border-radius: 12px; font-size: 0.95rem; font-weight: 800; color: #555; cursor: pointer; transition: 0.1s; }
+    .file-upload-btn:active { background: #eee; }
+    #preview-img { width: 100%; max-height: 250px; object-fit: contain; background: #111; border-radius: 12px; border: 2px solid #111; margin-top: 10px; display: none; }
+    .remove-photo-btn { display: none; margin-top: 6px; font-size: 0.85rem; color: #DC2626; font-weight: 800; background: none; border: none; cursor: pointer; padding: 0; }
+
+    .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 25px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; font-family: inherit; }
     .save-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #2563EB; }
     .save-btn:disabled { background: #888; color: #eee; cursor: not-allowed; box-shadow: none; }
   </style>
@@ -41,13 +46,28 @@
     <div class="form-group"><label>가격 (원)</label><input type="text" id="g-price" placeholder="88,000" inputmode="numeric" required></div>
 
     <div class="form-group"><label>장소</label><input type="text" id="g-location" placeholder="예: 클럽 헤비"></div>
+    
+    <div class="form-group">
+      <label>📜 셋리스트 사진</label>
+      <label for="g-photo" class="file-upload-btn" id="upload-label">📸 셋리스트 사진 선택하기</label>
+      <input type="file" id="g-photo" accept="image/*" style="display: none;">
+      <img id="preview-img" alt="셋리스트 미리보기">
+      <button type="button" class="remove-photo-btn" id="remove-btn">✕ 사진 삭제</button>
+    </div>
+
     <div class="form-group"><label>공연 후기</label><textarea id="g-review" placeholder="무대 연출, 사운드, 기억에 남는 순간들을 자유롭게 적어주세요 🤘"></textarea></div>
     
     <button type="submit" class="save-btn" id="save-btn">기록 저장하기</button>
   </form>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
+    const currentUser = localStorage.getItem("rockArchiveUser");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
+    let base64Photo = "";
 
     const priceInput = document.getElementById('g-price');
     priceInput.addEventListener('input', function (e) {
@@ -56,6 +76,52 @@
         value = Number(value).toLocaleString();
       }
       e.target.value = value;
+    });
+
+    document.getElementById('g-photo').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          base64Photo = canvas.toDataURL('image/jpeg', 0.7);
+          
+          document.getElementById('preview-img').src = base64Photo;
+          document.getElementById('preview-img').style.display = 'block';
+          document.getElementById('remove-btn').style.display = 'block';
+          document.getElementById('upload-label').innerText = '📸 사진 변경하기';
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('remove-btn').addEventListener('click', function() {
+      base64Photo = "";
+      document.getElementById('g-photo').value = "";
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('remove-btn').style.display = 'none';
+      document.getElementById('upload-label').innerText = '📸 셋리스트 사진 선택하기';
     });
 
     document.getElementById('gig-form').addEventListener('submit', function(e) {
@@ -68,11 +134,13 @@
       const rawPrice = priceInput.value.replace(/,/g, '');
 
       const newGig = {
+        userId: currentUser,
         title: document.getElementById('g-title').value,
         artist: document.getElementById('g-artist').value,
         date: document.getElementById('g-date').value,
         price: rawPrice,
         location: document.getElementById('g-location').value,
+        photo: base64Photo,
         review: document.getElementById('g-review').value
       };
 

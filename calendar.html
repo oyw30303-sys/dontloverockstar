@@ -23,7 +23,6 @@
     .day { background: #fff; aspect-ratio: 1 / 1.15; border-radius: 8px; padding: 6px; position: relative; display: flex; flex-direction: column; border: 2px solid #111; box-shadow: 2px 2px 0px #111; }
     .day-num { font-size: 0.9rem; color: #111; font-weight: 700; }
     
-    /* 공연 있는 날 스타일: 파란색 배경 + 드럼 이모지 */
     .has-gig { background: #2563EB; border: 2px solid #111; box-shadow: 2px 2px 0px #111; text-decoration: none; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; padding: 6px; aspect-ratio: 1 / 1.15; border-radius: 8px; transition: transform 0.1s, box-shadow 0.1s; }
     .has-gig:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
     .has-gig .day-num { color: #fff; font-size: 0.9rem; font-weight: 800; }
@@ -62,13 +61,18 @@
   </nav>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbyx9K2B1SYEfhwdssLpGQmxOFNjbn9dFNpg5ojpoJ1IdYXvnxc8jz52Un9hccO0Bn18/exec";
+    const currentUser = localStorage.getItem("rockArchiveUser");
+    if (!currentUser) {
+      window.location.href = "login.html";
+    }
+
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
     const calendarGrid = document.getElementById('calendar-grid');
     const monthInput = document.getElementById('month-input');
     let currentDate = new Date(); 
     let allGigs = [];
 
-    fetch(scriptUrl)
+    fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
       .then(gigs => {
         allGigs = gigs;
