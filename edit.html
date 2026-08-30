@@ -18,7 +18,7 @@
     .form-group input:not([type="date"]), .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; font-family: inherit; }
     .form-group input:not([type="date"]):focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #D9F99D; transform: translate(-2px, -2px); }
     
-    input[type="date"] { width: auto !important; min-width: 180px; max-width: 220px; background: #fff; border: 2px solid #111; color: #111; padding: 14px 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; font-family: inherit; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; }
+    input[type="date"] { width: auto !important; min-width: 200px; max-width: 240px; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; font-family: inherit; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; }
     input[type="date"]:focus { box-shadow: 4px 4px 0px #D9F99D; transform: translate(-2px, -2px); }
 
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
@@ -69,7 +69,7 @@
       .then(gigs => {
         const gig = gigs.find(g => String(g.id) === String(gigId));
         if(gig) {
-          document.getElementById('g-title').value = gig.title || '';
+          document.getElementById('g-title').value = gig.title || ''
           document.getElementById('g-artist').value = gig.artist || '';
           document.getElementById('g-date').value = gig.date ? String(gig.date).substring(0,10) : '';
           document.getElementById('g-price').value = gig.price ? Number(gig.price).toLocaleString() : '';

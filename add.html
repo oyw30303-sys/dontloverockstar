@@ -15,11 +15,12 @@
     .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
     
+    /* 일반 입력창 스타일 */
     .form-group input:not([type="date"]), .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; font-family: inherit; }
     .form-group input:not([type="date"]):focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
     
-    /* 날짜 입력창만 너비를 짧게(auto 혹은 고정 max-content) 줄이고 왼쪽 정렬 */
-    input[type="date"] { width: auto !important; min-width: 180px; max-width: 220px; background: #fff; border: 2px solid #111; color: #111; padding: 14px 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; font-family: inherit; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; }
+    /* 날짜 입력창: 세로 높이는 다른 창들과 똑같이 두툼하게(패딩 16px), 가로 너비만 콤팩트하게 고정 */
+    input[type="date"] { width: auto !important; min-width: 200px; max-width: 240px; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; -webkit-appearance: none; appearance: none; font-family: inherit; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; }
     input[type="date"]:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
 
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
