@@ -70,9 +70,7 @@
 
   <script>
     const currentUser = localStorage.getItem("rockArchiveUser");
-    if (!currentUser) {
-      window.location.href = "login.html";
-    }
+    if (!currentUser) window.location.href = "login.html";
 
     document.getElementById('user-badge').innerText = `👤 ${currentUser}`;
 
@@ -103,6 +101,16 @@
 
     initYearDropdown();
 
+    function cleanDateStr(dateVal) {
+      if (!dateVal) return '';
+      const str = String(dateVal).trim();
+      const match = str.match(/(\d{4})[-\.\/](\d{1,2})[-\.\/](\d{1,2})/);
+      if (match) {
+        return `${match[1]}.${match[2].padStart(2, '0')}.${match[3].padStart(2, '0')}`;
+      }
+      return str.substring(0, 10).replace(/-/g, '.');
+    }
+
     fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
       .then(gigs => {
@@ -113,7 +121,7 @@
         }
 
         allGigs = gigs;
-        allGigs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        allGigs.sort((a, b) => String(b.date).localeCompare(String(a.date)));
         updateDashboard(currentYear);
       })
       .catch(err => {
@@ -125,7 +133,8 @@
       
       allGigs.forEach(gig => {
         if (!gig.date) return;
-        const gigYear = new Date(gig.date).getFullYear();
+        const gigDate = cleanDateStr(gig.date);
+        const gigYear = Number(gigDate.substring(0, 4));
         if (gigYear === Number(selectedYear)) {
           yearTotal += Number(gig.price) || 0;
         }
@@ -141,7 +150,7 @@
 
       let html = '';
       allGigs.forEach(gig => {
-        const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 
+        const formattedDate = cleanDateStr(gig.date);
         const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
         const artistBadgesHtml = artistArray.map(a => `<span class="artist">${a}</span>`).join('');
         
