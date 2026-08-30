@@ -64,6 +64,19 @@
       e.target.value = value;
     });
 
+    // 날짜를 YYYY-MM-DD 포맷으로 안전하게 변환하는 함수
+    function parseDateToInput(dateVal) {
+      if (!dateVal) return '';
+      const d = new Date(dateVal);
+      if (isNaN(d.getTime())) {
+        return String(dateVal).substring(0, 10).replace(/\./g, '-');
+      }
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
     fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
       .then(gigs => {
@@ -71,7 +84,7 @@
         if(gig) {
           document.getElementById('g-title').value = gig.title || '';
           document.getElementById('g-artist').value = gig.artist || '';
-          document.getElementById('g-date').value = gig.date ? String(gig.date).substring(0,10) : '';
+          document.getElementById('g-date').value = parseDateToInput(gig.date);
           document.getElementById('g-price').value = gig.price ? Number(gig.price).toLocaleString() : '';
           document.getElementById('g-location').value = gig.location || '';
           document.getElementById('g-review').value = gig.review || '';
