@@ -13,12 +13,15 @@
     header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; }
 
     .detail-card { background: #fff; border: 2px solid #111; border-radius: 16px; padding: 24px; box-shadow: 4px 4px 0px #111; margin-bottom: 20px; }
-    .title { font-size: 1.4rem; font-weight: 900; margin: 0 0 10px 0; }
-    .price { font-size: 1.1rem; color: #2563EB; font-weight: 800; margin-bottom: 16px; }
+    .title { font-size: 1.4rem; font-weight: 900; margin: 0 0 20px 0; text-align: center; }
     
-    .info-row { font-size: 0.95rem; font-weight: 700; color: #555; margin-bottom: 10px; display: flex; gap: 8px; }
+    /* 항목 리스트 레이아웃 */
+    .info-list { display: flex; flex-direction: column; gap: 12px; }
+    .info-row { font-size: 0.95rem; font-weight: 700; color: #555; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+    .info-label { white-space: nowrap; flex-shrink: 0; color: #444; }
+    .info-value { color: #111; font-weight: 800; word-break: break-word; }
     
-    .divider { height: 2px; background: #eee; margin: 20px 0; }
+    .divider { height: 2px; background: #eee; margin: 22px 0; }
     .review-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 8px; text-align: left; }
     .review-content { font-size: 1rem; font-weight: 600; color: #333; line-height: 1.6; white-space: pre-wrap; text-align: left; }
 
@@ -70,11 +73,25 @@
           container.innerHTML = `
             <div class="detail-card">
               <h2 class="title">${gig.title}</h2>
-              <div class="price">₩ ${formattedPrice}</div>
               
-              <div class="info-row"><span>🎤 아티스트:</span> <strong>${gig.artist || ''}</strong></div>
-              <div class="info-row"><span>📅 날짜:</span> <strong>${formattedDate}</strong></div>
-              <div class="info-row"><span>📍 장소:</span> <strong>${gig.location || ''}</strong></div>
+              <div class="info-list">
+                <div class="info-row">
+                  <span class="info-label">🎤 아티스트:</span>
+                  <span class="info-value">${gig.artist || ''}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">📅 날짜:</span>
+                  <span class="info-value">${formattedDate}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">📍 장소:</span>
+                  <span class="info-value">${gig.location || ''}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">💸 가격:</span>
+                  <span class="info-value">₩ ${formattedPrice}</span>
+                </div>
+              </div>
               
               <div class="divider"></div>
               
