@@ -48,20 +48,18 @@
   </div>
 
   <script>
-    // 언니의 구글 시트 주소
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyJ6jZDpg6sL33-GW8RBDzTMJ5Xp9CJbJ6o-OrcvceKMyVG1DdxGA2IKJblVbgu1T-x/exec";
     const params = new URLSearchParams(window.location.search);
     const gigId = params.get('id');
 
-    // 1. 화면에 데이터 보여주기
     fetch(scriptUrl)
       .then(res => res.json())
       .then(gigs => {
-        const gig = gigs.find(g => g.id === gigId);
+        const gig = gigs.find(g => String(g.id) === String(gigId));
         if (gig) {
-          const artistArray = gig.artist ? gig.artist.split(',').map(a => a.trim()).filter(a => a !== "") : [];
+          const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
           const artistBadgesHtml = artistArray.map(a => `<span class="artist-badge">${a}</span>`).join('');
-          const formattedDate = gig.date ? gig.date.substring(0,10).replace(/-/g, '.') : '-';
+          const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : '-';
 
           document.getElementById('content-container').innerHTML = `
             <div class="hero">
@@ -83,9 +81,8 @@
         }
       });
 
-    // 2. 진짜 삭제 버튼 기능 (스프레드시트로 삭제 명령 보내기)
     document.getElementById('delete-btn').addEventListener('click', () => {
-      if (confirm("이 공연 기록을 시트에서 완전히 지울까요? 🥺")) {
+      if (confirm("정말로 이 공연 기록을 삭제할까요? 🥺")) {
         const btn = document.getElementById('delete-btn');
         btn.innerText = "삭제 중...⏳";
         
@@ -96,8 +93,8 @@
         })
         .then(res => res.json())
         .then(data => {
-          alert("완벽하게 삭제되었습니다! 🗑️");
-          window.location.href = 'index.html'; // 홈으로 돌아가기
+          alert("삭제되었습니다!");
+          window.location.href = 'index.html';
         });
       }
     });

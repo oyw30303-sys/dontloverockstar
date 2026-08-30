@@ -51,11 +51,11 @@
     fetch(scriptUrl)
       .then(res => res.json())
       .then(gigs => {
-        const gig = gigs.find(g => g.id === gigId);
+        const gig = gigs.find(g => String(g.id) === String(gigId));
         if(gig) {
           document.getElementById('g-title').value = gig.title || '';
           document.getElementById('g-artist').value = gig.artist || '';
-          document.getElementById('g-date').value = gig.date ? gig.date.substring(0,10) : '';
+          document.getElementById('g-date').value = gig.date ? String(gig.date).substring(0,10) : '';
           document.getElementById('g-price').value = gig.price || '';
           document.getElementById('g-location').value = gig.location || '';
           document.getElementById('g-review').value = gig.review || '';
@@ -91,7 +91,6 @@
       })
       .then(res => res.json())
       .then(data => {
-        // 수정 완료 후 즉시 상세 페이지로 이동해서 바뀐 결과 바로 확인!
         window.location.href = `detail.html?id=${gigId}`;
       })
       .catch(err => {
