@@ -81,7 +81,7 @@
       }
     }
 
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
     const cardList = document.getElementById('card-list');
     const yearSelect = document.getElementById('year-select');
     const summaryText = document.getElementById('summary-text');
@@ -101,7 +101,8 @@
 
     initYearDropdown();
 
-    function cleanDateStr(dateVal) {
+    // 문자열 기반 안전 날짜 추출 (YYYY.MM.DD)
+    function formatDateStr(dateVal) {
       if (!dateVal) return '';
       const str = String(dateVal).trim();
       const match = str.match(/(\d{4})[-\.\/](\d{1,2})[-\.\/](\d{1,2})/);
@@ -121,7 +122,8 @@
         }
 
         allGigs = gigs;
-        allGigs.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+        // 문자열 역순 정렬 (최신 날짜가 위로)
+        allGigs.sort((a, b) => formatDateStr(b.date).localeCompare(formatDateStr(a.date)));
         updateDashboard(currentYear);
       })
       .catch(err => {
@@ -133,7 +135,7 @@
       
       allGigs.forEach(gig => {
         if (!gig.date) return;
-        const gigDate = cleanDateStr(gig.date);
+        const gigDate = formatDateStr(gig.date);
         const gigYear = Number(gigDate.substring(0, 4));
         if (gigYear === Number(selectedYear)) {
           yearTotal += Number(gig.price) || 0;
@@ -150,7 +152,7 @@
 
       let html = '';
       allGigs.forEach(gig => {
-        const formattedDate = cleanDateStr(gig.date);
+        const formattedDate = formatDateStr(gig.date);
         const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
         const artistBadgesHtml = artistArray.map(a => `<span class="artist">${a}</span>`).join('');
         

@@ -56,15 +56,23 @@
 
   <script>
     const currentUser = localStorage.getItem("rockArchiveUser");
-    if (!currentUser) {
-      window.location.href = "login.html";
-    }
+    if (!currentUser) window.location.href = "login.html";
 
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
     const artistCloud = document.getElementById('artist-cloud');
     const cardList = document.getElementById('card-list');
     
     let allGigs = [];
+
+    function formatDateStr(dateVal) {
+      if (!dateVal) return '';
+      const str = String(dateVal).trim();
+      const match = str.match(/(\d{4})[-\.\/](\d{1,2})[-\.\/](\d{1,2})/);
+      if (match) {
+        return `${match[1]}.${match[2].padStart(2, '0')}.${match[3].padStart(2, '0')}`;
+      }
+      return str.substring(0, 10).replace(/-/g, '.');
+    }
 
     fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
@@ -106,14 +114,14 @@
         return arr.includes(artistName);
       });
 
-      filteredGigs.sort((a, b) => new Date(b.date) - new Date(a.date));
+      filteredGigs.sort((a, b) => formatDateStr(b.date).localeCompare(formatDateStr(a.date)));
 
       let totalCost = 0;
       let html = '';
 
       filteredGigs.forEach(gig => {
         totalCost += Number(gig.price) || 0;
-        const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 
+        const formattedDate = formatDateStr(gig.date);
         const artistBadgesHtml = gig.artist ? String(gig.artist).split(',').map(a => `<span class="artist-tag">${a.trim()}</span>`).join('') : '';
         
         html += `

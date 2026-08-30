@@ -31,7 +31,6 @@
     .empty { background: transparent; border: none; box-shadow: none; }
     .loading-msg { text-align: center; color: #888; font-weight: 700; padding: 20px; }
 
-    /* 하단 회색 요약 텍스트 스타일 */
     .calendar-total-summary { text-align: center; color: #9CA3AF; font-size: 0.85rem; font-weight: 600; margin: 25px 0 10px 0; letter-spacing: -0.3px; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
@@ -66,16 +65,24 @@
 
   <script>
     const currentUser = localStorage.getItem("rockArchiveUser");
-    if (!currentUser) {
-      window.location.href = "login.html";
-    }
+    if (!currentUser) window.location.href = "login.html";
 
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
     const calendarGrid = document.getElementById('calendar-grid');
     const calendarSummary = document.getElementById('calendar-summary');
     const monthInput = document.getElementById('month-input');
     let currentDate = new Date(); 
     let allGigs = [];
+
+    function normalizeDate(dateVal) {
+      if (!dateVal) return '';
+      const str = String(dateVal).trim();
+      const match = str.match(/(\d{4})[-\.\/](\d{1,2})[-\.\/](\d{1,2})/);
+      if (match) {
+        return `${match[1]}-${match[2].padStart(2, '0')}-${match[3].padStart(2, '0')}`;
+      }
+      return str.substring(0, 10);
+    }
 
     fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
@@ -105,7 +112,7 @@
         
         const gigOnThisDay = allGigs.find(g => {
           if (!g.date) return false;
-          return String(g.date).substring(0, 10) === currentDayStr;
+          return normalizeDate(g.date) === currentDayStr;
         });
         
         if (gigOnThisDay) {
@@ -123,7 +130,6 @@
       }
       calendarGrid.innerHTML = html;
 
-      // 하단 월별 합계 표시
       if (monthGigCount > 0) {
         calendarSummary.innerText = `이 달 총 ${monthGigCount}회 관람 · ₩ ${monthTotalCost.toLocaleString()}`;
       } else {
