@@ -84,7 +84,7 @@
     document.getElementById('gig-form').addEventListener('submit', function(e) {
       e.preventDefault(); 
       const btn = document.getElementById('save-btn');
-      btn.innerText = "시트에 덮어쓰는 중... ⏳";
+      btn.innerText = "수정 중... ⏳";
       btn.disabled = true;
 
       const rawPrice = priceInput.value.replace(/,/g, '');

@@ -15,14 +15,10 @@
     .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
     
-    /* 모든 입력창과 날짜창의 세로폭(패딩, 높이, 글자 크기)을 완전히 100% 일치시킴 */
     .form-group input, .form-group textarea, input[type="date"] { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; box-sizing: border-box; font-family: inherit; line-height: normal; }
-    
     .form-group input:focus, .form-group textarea:focus, input[type="date"]:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
     
-    /* 날짜창 세로 쪼그라듦 방지 및 원래 높이 유지 */
     input[type="date"] { cursor: pointer; -webkit-appearance: none; appearance: none; display: block; height: 56px; }
-    
     .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
 
     .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 20px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
@@ -65,7 +61,7 @@
       e.preventDefault(); 
       
       const btn = document.getElementById('save-btn');
-      btn.innerText = "시트에 저장 중... ⏳";
+      btn.innerText = "저장 중... ⏳";
       btn.disabled = true;
 
       const rawPrice = priceInput.value.replace(/,/g, '');
