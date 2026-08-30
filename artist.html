@@ -11,12 +11,21 @@
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
     header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
     
-    .artist-cloud { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
-    .artist-btn { background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; color: #111; cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+    .artist-wrapper { margin: 20px 0 25px 0; }
+    
+    /* 3줄 그림자까지 완벽하게 수용하도록 높이 및 패딩 조정 (158px) */
+    .artist-cloud { display: flex; flex-wrap: wrap; gap: 10px; max-height: 158px; overflow: hidden; padding: 2px 2px 6px 2px; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .artist-cloud.expanded { max-height: 2000px; }
+
+    .artist-btn { background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; padding: 7px 14px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; color: #111; cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 8px; font-family: inherit; height: 40px; margin: 0; }
     .artist-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
     .artist-btn.active { background: #2563EB; color: #fff; box-shadow: 2px 2px 0px #111; }
     .artist-btn .count { background: #111; color: #D9F99D; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 900; }
     .artist-btn.active .count { background: #fff; color: #2563EB; }
+
+    /* 더보기 / 접기 버튼 */
+    .toggle-more-btn { display: none; width: 100%; background: none; border: none; padding: 12px 0 4px 0; font-size: 0.85rem; font-weight: 800; color: #6B7280; cursor: pointer; text-align: center; font-family: inherit; }
+    .toggle-more-btn:active { color: #111; }
 
     .card-list { display: flex; flex-direction: column; gap: 20px; }
     .record-card { background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; border: 2px solid #111; box-shadow: 4px 4px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
@@ -42,7 +51,11 @@
 <body>
   <header><h1>ARTIST ARCHIVE</h1></header>
 
-  <div class="artist-cloud" id="artist-cloud"></div>
+  <div class="artist-wrapper">
+    <div class="artist-cloud" id="artist-cloud"></div>
+    <button id="toggle-more-btn" class="toggle-more-btn" onclick="toggleArtistCloud()">더보기 ▾</button>
+  </div>
+
   <div class="card-list" id="card-list">
     <div class="empty-msg">데이터를 불러오는 중입니다... ⏳</div>
   </div>
@@ -60,9 +73,11 @@
 
     const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
     const artistCloud = document.getElementById('artist-cloud');
+    const toggleBtn = document.getElementById('toggle-more-btn');
     const cardList = document.getElementById('card-list');
     
     let allGigs = [];
+    let isExpanded = false;
 
     function formatDateStr(dateVal) {
       if (!dateVal) return '';
@@ -74,20 +89,46 @@
       return str.substring(0, 10).replace(/-/g, '.');
     }
 
+    function toggleArtistCloud() {
+      isExpanded = !isExpanded;
+      if (isExpanded) {
+        artistCloud.classList.add('expanded');
+        toggleBtn.innerText = '접기 ▴';
+      } else {
+        artistCloud.classList.remove('expanded');
+        toggleBtn.innerText = '더보기 ▾';
+      }
+    }
+
     fetch(`${scriptUrl}?user=${encodeURIComponent(currentUser)}`)
       .then(res => res.json())
       .then(gigs => {
         allGigs = gigs;
-        let artistCounts = {};
+        let artistStats = {};
         
         gigs.forEach(gig => {
-          let arr = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
-          arr.forEach(a => { artistCounts[a] = (artistCounts[a] || 0) + 1; });
+          const gigDate = formatDateStr(gig.date);
+          const arr = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
+          
+          arr.forEach(a => {
+            if (!artistStats[a]) {
+              artistStats[a] = { count: 0, latestDate: gigDate };
+            }
+            artistStats[a].count += 1;
+            if (gigDate > artistStats[a].latestDate) {
+              artistStats[a].latestDate = gigDate;
+            }
+          });
         });
 
-        const sortedArtists = Object.keys(artistCounts).sort((a, b) => artistCounts[b] - artistCounts[a]);
+        const sortedArtists = Object.keys(artistStats).sort((a, b) => {
+          if (artistStats[b].count !== artistStats[a].count) {
+            return artistStats[b].count - artistStats[a].count;
+          }
+          return artistStats[b].latestDate.localeCompare(artistStats[a].latestDate);
+        });
 
-        if(sortedArtists.length === 0) {
+        if (sortedArtists.length === 0) {
           artistCloud.innerHTML = '';
           cardList.innerHTML = '<div class="empty-msg">저장된 아티스트가 없습니다.</div>';
         } else {
@@ -95,13 +136,20 @@
           cardList.innerHTML = '<div class="empty-msg">위에서 아티스트를 선택해보세요! 🎸</div>';
           
           sortedArtists.forEach(artist => {
-            const count = artistCounts[artist];
+            const count = artistStats[artist].count;
             const btn = document.createElement('button');
             btn.className = 'artist-btn';
             btn.innerHTML = `${artist} <span class="count">${count}</span>`;
             btn.onclick = () => filterGigs(artist, btn);
             artistCloud.appendChild(btn);
           });
+
+          // 3줄을 초과할 경우에만 더보기 버튼 표시
+          setTimeout(() => {
+            if (artistCloud.scrollHeight > 165) {
+              toggleBtn.style.display = 'block';
+            }
+          }, 50);
         }
       });
 

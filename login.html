@@ -10,17 +10,21 @@
     body { background-color: #F4F5F0; color: #111; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; letter-spacing: -0.02em; margin: 0; padding: 40px 20px; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
     
     .login-card { background: #fff; border: 2px solid #111; border-radius: 20px; padding: 32px 24px; box-shadow: 4px 4px 0px #111; text-align: center; max-width: 400px; margin: 0 auto; width: 100%; }
-    .brand-title { font-size: 1.6rem; font-weight: 900; margin: 0 0 6px 0; letter-spacing: -0.5px; }
-    .brand-subtitle { font-size: 0.95rem; font-weight: 700; color: #666; margin: 0 0 30px 0; }
+    .brand-title { font-size: 1.6rem; font-weight: 900; margin: 0 0 8px 0; letter-spacing: -0.5px; }
+    
+    /* 락스타 경고 뱃지 (그림자 제거) */
+    .warning-badge { display: inline-block; background: #FEE2E2; color: #DC2626; border: 1.5px solid #111; font-size: 0.8rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; margin-bottom: 8px; box-shadow: none; }
+    .brand-subtitle { font-size: 0.95rem; font-weight: 700; color: #666; margin: 0 0 28px 0; }
 
     .form-group { margin-bottom: 20px; text-align: left; }
     .form-group label { display: block; font-size: 0.9rem; font-weight: 800; margin-bottom: 8px; color: #111; }
     .form-group input { width: 100%; background: #F4F5F0; border: 2px solid #111; padding: 16px; border-radius: 12px; font-size: 1.05rem; font-weight: 700; outline: none; font-family: inherit; transition: 0.2s; }
-    .form-group input:focus { background: #fff; box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
+    .form-group input:focus { background: #fff; box-shadow: 3px 3px 0px #2563EB; transform: translate(-1px, -1px); }
 
-    .login-btn { width: 100%; background: #2563EB; color: #fff; border: 2px solid #111; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; margin-top: 15px; cursor: pointer; box-shadow: 4px 4px 0px #111; transition: 0.1s; font-family: inherit; }
-    .login-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0px #111; }
-    .login-btn:disabled { background: #888; cursor: not-allowed; box-shadow: none; }
+    /* 입장 버튼 (그림자 제거) */
+    .login-btn { width: 100%; background: #2563EB; color: #fff; border: 2px solid #111; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; margin-top: 15px; cursor: pointer; box-shadow: none; transition: opacity 0.1s; font-family: inherit; }
+    .login-btn:active { opacity: 0.85; }
+    .login-btn:disabled { background: #888; cursor: not-allowed; opacity: 0.6; }
 
     .help-text { font-size: 0.85rem; font-weight: 600; color: #777; margin-top: 22px; line-height: 1.4; }
   </style>
@@ -29,7 +33,8 @@
 
   <div class="login-card">
     <h1 class="brand-title">ROCK ARCHIVE 🤘</h1>
-    <p class="brand-subtitle">나만의 공연 기록 보관소</p>
+    <div class="warning-badge">⚠️ 락스타를 사랑하지 마세요</div>
+    <p class="brand-subtitle">하지만 공연 기록은 남겨야 하니까</p>
 
     <form id="login-form">
       <div class="form-group">
@@ -50,9 +55,8 @@
   </div>
 
   <script>
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbxR-8LeeH1CtcrG5pdu9gRIpuIU54SYWwssgHWdGv8twzvt_pq0qUtVvDxb6z9CiitS/exec";
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
 
-    // 이미 로그인되어 있으면 메인 화면으로 자동 이동
     if (localStorage.getItem("rockArchiveUser")) {
       window.location.href = "index.html";
     }
