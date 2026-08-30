@@ -12,12 +12,15 @@
     header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
     .user-tag { font-size: 0.8rem; font-weight: 800; background: #fff; border: 1.5px solid #111; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-family: inherit; }
     
-    .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; position: relative; }
-    .summary-title-wrap { position: relative; display: inline-block; cursor: pointer; }
+    .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 15px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; }
     .summary-title { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
-    .year-select-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 1rem; }
     .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; display: block; }
     
+    /* 연/월 필터 영역 */
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+    .filter-select { flex: 1; background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; border-radius: 12px; padding: 12px 14px; font-size: 0.95rem; font-weight: 800; font-family: inherit; color: #111; outline: none; cursor: pointer; transition: 0.1s; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+    .filter-select:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #111; }
+
     .card-list { display: flex; flex-direction: column; gap: 20px; }
     .record-card { background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; border: 2px solid #111; box-shadow: 4px 4px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
     .record-card:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; } 
@@ -49,11 +52,28 @@
 
   <div class="content">
     <div class="summary-box">
-      <div class="summary-title-wrap">
-        <p class="summary-title" id="summary-text">올해 공연에 태운 돈 💸</p>
-        <select id="year-select" class="year-select-overlay"></select>
-      </div>
+      <p class="summary-title" id="summary-text">올해 공연에 태운 돈 💸</p>
       <strong id="total-price">₩ 0</strong>
+    </div>
+
+    <!-- 연/월 선택 필터 바 -->
+    <div class="filter-bar">
+      <select id="filter-year" class="filter-select"></select>
+      <select id="filter-month" class="filter-select">
+        <option value="all">전체 (1~12월)</option>
+        <option value="01">1월</option>
+        <option value="02">2월</option>
+        <option value="03">3월</option>
+        <option value="04">4월</option>
+        <option value="05">5월</option>
+        <option value="06">6월</option>
+        <option value="07">7월</option>
+        <option value="08">8월</option>
+        <option value="09">9월</option>
+        <option value="10">10월</option>
+        <option value="11">11월</option>
+        <option value="12">12월</option>
+      </select>
     </div>
     
     <div class="card-list" id="card-list">
@@ -83,7 +103,8 @@
 
     const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
     const cardList = document.getElementById('card-list');
-    const yearSelect = document.getElementById('year-select');
+    const filterYear = document.getElementById('filter-year');
+    const filterMonth = document.getElementById('filter-month');
     const summaryText = document.getElementById('summary-text');
     const totalPriceEl = document.getElementById('total-price');
 
@@ -93,15 +114,14 @@
     function initYearDropdown() {
       let optionsHtml = '';
       for (let y = currentYear; y >= currentYear - 10; y--) {
-        const label = (y === currentYear) ? `올해 (${y}년)` : `${y}년`;
+        const label = (y === currentYear) ? `${y}년 (올해)` : `${y}년`;
         optionsHtml += `<option value="${y}" ${y === currentYear ? 'selected' : ''}>${label}</option>`;
       }
-      yearSelect.innerHTML = optionsHtml;
+      filterYear.innerHTML = optionsHtml;
     }
 
     initYearDropdown();
 
-    // 문자열 기반 안전 날짜 추출 (YYYY.MM.DD)
     function formatDateStr(dateVal) {
       if (!dateVal) return '';
       const str = String(dateVal).trim();
@@ -122,36 +142,47 @@
         }
 
         allGigs = gigs;
-        // 문자열 역순 정렬 (최신 날짜가 위로)
         allGigs.sort((a, b) => formatDateStr(b.date).localeCompare(formatDateStr(a.date)));
-        updateDashboard(currentYear);
+        updateDashboard();
       })
       .catch(err => {
         cardList.innerHTML = '<div class="empty-msg">데이터를 불러오는데 실패했습니다. 😢</div>';
       });
 
-    function updateDashboard(selectedYear) {
-      let yearTotal = 0;
-      
-      allGigs.forEach(gig => {
-        if (!gig.date) return;
-        const gigDate = formatDateStr(gig.date);
-        const gigYear = Number(gigDate.substring(0, 4));
-        if (gigYear === Number(selectedYear)) {
-          yearTotal += Number(gig.price) || 0;
-        }
+    function updateDashboard() {
+      const selectedYear = filterYear.value;
+      const selectedMonth = filterMonth.value;
+
+      let filteredGigs = allGigs.filter(gig => {
+        if (!gig.date) return false;
+        const d = formatDateStr(gig.date);
+        const y = d.substring(0, 4);
+        const m = d.substring(5, 7);
+
+        if (y !== selectedYear) return false;
+        if (selectedMonth !== "all" && m !== selectedMonth) return false;
+        return true;
       });
 
-      if (Number(selectedYear) === currentYear) {
-        summaryText.innerText = "올해 공연에 태운 돈 💸";
+      // 총 금액 계산
+      let total = filteredGigs.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
+      totalPriceEl.innerText = `₩ ${total.toLocaleString()}`;
+
+      // 요약 텍스트 갱신
+      if (selectedMonth === "all") {
+        summaryText.innerText = (Number(selectedYear) === currentYear) ? "올해 공연에 태운 돈 💸" : `${selectedYear}년 공연에 태운 돈 💸`;
       } else {
-        summaryText.innerText = `${selectedYear}년 공연에 태운 돈 💸`;
+        summaryText.innerText = `${selectedYear}년 ${Number(selectedMonth)}월에 태운 돈 💸`;
       }
 
-      totalPriceEl.innerText = `₩ ${yearTotal.toLocaleString()}`;
+      // 리스트 렌더링
+      if (filteredGigs.length === 0) {
+        cardList.innerHTML = '<div class="empty-msg">해당 기간에 관람한 공연이 없습니다. 🎸</div>';
+        return;
+      }
 
       let html = '';
-      allGigs.forEach(gig => {
+      filteredGigs.forEach(gig => {
         const formattedDate = formatDateStr(gig.date);
         const artistArray = gig.artist ? String(gig.artist).split(',').map(a => a.trim()).filter(a => a !== "") : [];
         const artistBadgesHtml = artistArray.map(a => `<span class="artist">${a}</span>`).join('');
@@ -170,9 +201,8 @@
       cardList.innerHTML = html;
     }
 
-    yearSelect.addEventListener('change', (e) => {
-      updateDashboard(e.target.value);
-    });
+    filterYear.addEventListener('change', updateDashboard);
+    filterMonth.addEventListener('change', updateDashboard);
   </script>
 </body>
 </html>

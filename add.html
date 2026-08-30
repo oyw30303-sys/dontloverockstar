@@ -52,6 +52,13 @@
 
     const scriptUrl = "https://script.google.com/macros/s/AKfycbxlYgTHF-G5RhLTd6rIXKVYaXlZyVHLzh8ZdG4_gMvwhqTSNRQ0xokYrg33EV0a-3v8/exec";
 
+    // URL 파라미터에서 넘겨받은 date 값 확인 (?date=YYYY-MM-DD)
+    const params = new URLSearchParams(window.location.search);
+    const dateParam = params.get('date');
+    if (dateParam) {
+      document.getElementById('g-date').value = dateParam;
+    }
+
     const priceInput = document.getElementById('g-price');
     priceInput.addEventListener('input', function (e) {
       let value = e.target.value.replace(/[^0-9]/g, '');
