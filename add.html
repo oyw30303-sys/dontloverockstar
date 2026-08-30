@@ -5,19 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>기록 추가</title>
   <style>
-    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 20px 90px 20px; }
+    * { box-sizing: border-box; }
+    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 70px 20px 100px 20px; }
+    
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
     .back-btn { color: #111; text-decoration: none; font-size: 1.5rem; font-weight: 900; margin-right: 15px; }
     header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; }
     
-    .form-group { margin-bottom: 20px; }
+    .form-group { margin-bottom: 22px; width: 100%; }
     .form-group label { display: block; color: #111; font-size: 0.95rem; margin-bottom: 8px; font-weight: 800; }
-    .form-group input, .form-group textarea { width: 100%; box-sizing: border-box; background: #fff; border: 2px solid #111; color: #111; padding: 16px; border-radius: 12px; font-size: 1rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
+    .form-group input, .form-group textarea { width: 100%; background: #fff; border: 2px solid #111; color: #111; padding: 14px 12px; border-radius: 12px; font-size: 0.95rem; font-weight: 600; outline: none; transition: box-shadow 0.2s, transform 0.2s; }
     .form-group input:focus, .form-group textarea:focus { box-shadow: 4px 4px 0px #2563EB; transform: translate(-2px, -2px); }
-    input[type="date"] { cursor: pointer; color: #111; font-family: inherit; }
-    .form-group textarea { height: 150px; resize: none; line-height: 1.5; }
     
-    .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 30px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+    /* 날짜 칸 내부 글자가 잘리지 않도록 폰트 크기 미세 조정 및 패딩 맞춤 */
+    input[type="date"] { cursor: pointer; color: #111; font-family: inherit; font-size: 0.9rem; }
+    .form-group textarea { height: 140px; resize: none; line-height: 1.5; }
+    
+    /* 날짜와 가격 칸 비율 조절 (날짜를 살짝 줄여서 겹침 방지) */
+    .row-group { display: flex; gap: 10px; width: 100%; }
+    .row-group .date-group { flex: 0.9; }   /* 날짜 칸을 살짝 줄임 */
+    .row-group .price-group { flex: 1.1; } /* 가격 칸에 여유를 줌 */
+
+    .save-btn { display: block; width: 100%; background: #111; color: #D9F99D; text-align: center; padding: 18px; border-radius: 12px; font-size: 1.1rem; font-weight: 900; border: 2px solid #111; margin-top: 20px; box-shadow: 4px 4px 0px #2563EB; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
     .save-btn:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #2563EB; }
     .save-btn:disabled { background: #888; color: #eee; cursor: not-allowed; box-shadow: none; }
   </style>
@@ -28,15 +37,18 @@
     <h1>NEW ARCHIVE</h1>
   </header>
 
-  <form id="gig-form">
+  <form id="gig-form" style="margin-top: 15px;">
     <div class="form-group"><label>공연 이름</label><input type="text" id="g-title" placeholder="예: 단독 콘서트" required></div>
     <div class="form-group"><label>출연 아티스트</label><input type="text" id="g-artist" placeholder="예: 신인류, 실리카겔 (쉼표 구분)" required></div>
-    <div class="form-group" style="display: flex; gap: 15px;">
-      <div style="flex: 1;"><label>날짜</label><input type="date" id="g-date" onclick="try{this.showPicker();}catch(e){}" required></div>
-      <div style="flex: 1;"><label>가격 (원)</label><input type="number" id="g-price" placeholder="88000" required></div>
+    
+    <div class="row-group">
+      <div class="form-group date-group"><label>날짜</label><input type="date" id="g-date" onclick="try{this.showPicker();}catch(e){}" required></div>
+      <div class="form-group price-group"><label>가격 (원)</label><input type="number" id="g-price" placeholder="88000" required></div>
     </div>
+
     <div class="form-group"><label>장소</label><input type="text" id="g-location" placeholder="예: 클럽 헤비"></div>
     <div class="form-group"><label>공연 후기</label><textarea id="g-review" placeholder="무대 연출, 사운드, 기억에 남는 순간들을 자유롭게 적어주세요 🤘"></textarea></div>
+    
     <button type="submit" class="save-btn" id="save-btn">기록 저장하기</button>
   </form>
 
