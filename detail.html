@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>공연 상세</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <style>
-    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 70px 20px 100px 20px; }
+    * { box-sizing: border-box; }
+    body { background-color: #F4F5F0; color: #111; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; letter-spacing: -0.02em; margin: 0; padding: 70px 20px 100px 20px; }
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
     .back-btn { color: #111; text-decoration: none; font-size: 1.5rem; font-weight: 900; margin-right: 15px; }
     header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; }
@@ -17,13 +19,11 @@
     .info-row { font-size: 0.95rem; font-weight: 700; color: #555; margin-bottom: 10px; display: flex; gap: 8px; }
     
     .divider { height: 2px; background: #eee; margin: 20px 0; }
-    
-    /* 타이틀과 내용 모두 왼쪽 정렬 적용 */
     .review-section label { display: block; font-size: 0.95rem; font-weight: 800; color: #111; margin-bottom: 8px; text-align: left; }
     .review-content { font-size: 1rem; font-weight: 600; color: #333; line-height: 1.6; white-space: pre-wrap; text-align: left; }
 
     .btn-group { display: flex; gap: 10px; margin-top: 30px; }
-    .action-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 900; border: 2px solid #111; text-align: center; text-decoration: none; cursor: pointer; }
+    .action-btn { flex: 1; padding: 14px; border-radius: 12px; font-size: 1rem; font-weight: 900; border: 2px solid #111; text-align: center; text-decoration: none; cursor: pointer; font-family: inherit; }
     .edit-btn { background: #D9F99D; color: #111; box-shadow: 3px 3px 0px #111; }
     .delete-btn { background: #FEE2E2; color: #DC2626; box-shadow: 3px 3px 0px #111; }
     .action-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }

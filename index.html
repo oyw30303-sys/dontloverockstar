@@ -4,21 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ROCK ARCHIVE</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <style>
-    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 80px 20px 90px 20px; }
+    * { box-sizing: border-box; }
+    body { background-color: #F4F5F0; color: #111; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; letter-spacing: -0.02em; margin: 0; padding: 80px 20px 90px 20px; }
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
     header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
     
-    /* 상단 요약 박스 */
     .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 24px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; position: relative; }
-    
-    /* 문구 래퍼: 터치하면 연도 선택창이 뜨도록 투명 select를 위에 겹침 */
     .summary-title-wrap { position: relative; display: inline-block; cursor: pointer; }
     .summary-title { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
-    
-    /* 완전히 투명하게 문구 위에 덮는 select 태그 */
     .year-select-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 1rem; }
-    
     .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; display: block; }
     
     .card-list { display: flex; flex-direction: column; gap: 20px; }
@@ -51,7 +47,6 @@
     <div class="summary-box">
       <div class="summary-title-wrap">
         <p class="summary-title" id="summary-text">올해 공연에 태운 돈 💸</p>
-        <!-- 터치 시 뜨는 10년치 연도 선택 드롭다운 -->
         <select id="year-select" class="year-select-overlay"></select>
       </div>
       <strong id="total-price">₩ 0</strong>
@@ -79,7 +74,6 @@
     let allGigs = [];
     const currentYear = new Date().getFullYear();
 
-    // 10년 전까지만 연도 옵션 생성
     function initYearDropdown() {
       let optionsHtml = '';
       for (let y = currentYear; y >= currentYear - 10; y--) {
@@ -102,14 +96,12 @@
 
         allGigs = gigs;
         allGigs.sort((a, b) => new Date(b.date) - new Date(a.date));
-
         updateDashboard(currentYear);
       })
       .catch(err => {
         cardList.innerHTML = '<div class="empty-msg">데이터를 불러오는데 실패했습니다. 😢</div>';
       });
 
-    // 선택된 연도에 따라 문구와 금액 갱신
     function updateDashboard(selectedYear) {
       let yearTotal = 0;
       
@@ -121,7 +113,6 @@
         }
       });
 
-      // 올해면 '올해 공연에 태운 돈 💸', 다른 연도면 '2025년 공연에 태운 돈 💸'
       if (Number(selectedYear) === currentYear) {
         summaryText.innerText = "올해 공연에 태운 돈 💸";
       } else {
@@ -130,7 +121,6 @@
 
       totalPriceEl.innerText = `₩ ${yearTotal.toLocaleString()}`;
 
-      // 목록 렌더링
       let html = '';
       allGigs.forEach(gig => {
         const formattedDate = gig.date ? String(gig.date).substring(0,10).replace(/-/g, '.') : ''; 

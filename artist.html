@@ -4,13 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>아티스트 아카이브</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <style>
-    body { background-color: #F4F5F0; color: #111; font-family: -apple-system, sans-serif; margin: 0; padding: 60px 20px 90px 20px; }
+    * { box-sizing: border-box; }
+    body { background-color: #F4F5F0; color: #111; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; letter-spacing: -0.02em; margin: 0; padding: 60px 20px 90px 20px; }
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: center; z-index: 1000; border-bottom: 2px solid #111; }
     header h1 { font-size: 1.2rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
     
     .artist-cloud { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
-    .artist-btn { background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; color: #111; cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 8px; }
+    .artist-btn { background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 0.95rem; color: #111; cursor: pointer; transition: 0.1s; display: flex; align-items: center; gap: 8px; font-family: inherit; }
     .artist-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
     .artist-btn.active { background: #2563EB; color: #fff; box-shadow: 2px 2px 0px #111; }
     .artist-btn .count { background: #111; color: #D9F99D; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 900; }
@@ -26,9 +28,7 @@
     .artist-tag { background: #2563EB; color: #fff; font-size: 0.8rem; padding: 4px 10px; border-radius: 20px; font-weight: 700; border: 1.5px solid #111; }
     .card-info { color: #555; font-size: 0.9rem; margin: 4px 0; display: flex; gap: 10px; font-weight: 600; }
     
-    /* 젤 밑에 작고 은은하게 들어가는 회색 텍스트 총합 스타일 */
     .artist-total-summary { text-align: center; color: #9CA3AF; font-size: 0.85rem; font-weight: 600; margin: 15px 0 25px 0; letter-spacing: -0.3px; }
-
     .empty-msg { text-align: center; color: #888; font-weight: 700; padding: 40px 0; }
 
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
@@ -101,7 +101,6 @@
         return arr.includes(artistName);
       });
 
-      // 날짜 기준 최신순 정렬
       filteredGigs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       let totalCost = 0;
@@ -121,7 +120,6 @@
         `;
       });
 
-      // 목록 젤 밑에 연한 회색으로 총합 텍스트 추가
       html += `
         <div class="artist-total-summary">
           총 ${filteredGigs.length}회 관람 · ₩ ${totalCost.toLocaleString()}
