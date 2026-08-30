@@ -6,25 +6,28 @@
   <title>ROCK ARCHIVE</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <style>
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { background-color: #F4F5F0; color: #111; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; letter-spacing: -0.02em; margin: 0; padding: 80px 20px 90px 20px; }
     header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #F4F5F0; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; border-bottom: 2px solid #111; }
     header h1 { font-size: 1.1rem; margin: 0; color: #111; font-weight: 900; letter-spacing: -0.5px; }
-    .user-tag { font-size: 0.8rem; font-weight: 800; background: #fff; border: 1.5px solid #111; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-family: inherit; }
     
-    /* 요약 박스 (터치하여 연도 변경 가능) */
-    .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 15px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; position: relative; cursor: pointer; }
+    .user-tag { font-size: 0.8rem; font-weight: 800; background: #fff; border: 1.5px solid #111; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-family: inherit; box-shadow: 2px 2px 0px #111; transition: transform 0.05s, box-shadow 0.05s; }
+    .user-tag:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
+    
+    /* 요약 박스 */
+    .summary-box { background: #D9F99D; padding: 22px; border-radius: 16px; margin-top: 10px; margin-bottom: 15px; text-align: center; border: 2px solid #111; box-shadow: 4px 4px 0px #111; position: relative; cursor: pointer; transition: transform 0.05s, box-shadow 0.05s; }
+    .summary-box:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0px #111; }
     .summary-title { color: #333; font-size: 0.95rem; margin: 0 0 8px 0; font-weight: 700; }
     .summary-box strong { color: #111; font-size: 2rem; font-weight: 900; letter-spacing: -1px; display: block; }
     .box-year-select { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
 
     /* 연/월 필터 바 */
     .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; }
-    .filter-select { flex: 1; background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; border-radius: 12px; padding: 12px 14px; font-size: 0.95rem; font-weight: 800; font-family: inherit; color: #111; outline: none; cursor: pointer; transition: 0.1s; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
-    .filter-select:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px #111; }
+    .filter-select { flex: 1; background: #fff; border: 2px solid #111; box-shadow: 2px 2px 0px #111; border-radius: 12px; padding: 12px 14px; font-size: 0.95rem; font-weight: 800; font-family: inherit; color: #111; outline: none; cursor: pointer; transition: transform 0.05s, box-shadow 0.05s; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+    .filter-select:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px #111; }
 
     .card-list { display: flex; flex-direction: column; gap: 20px; }
-    .record-card { background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; border: 2px solid #111; box-shadow: 4px 4px 0px #111; transition: transform 0.1s, box-shadow 0.1s; }
+    .record-card { background: #fff; border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; display: block; border: 2px solid #111; box-shadow: 4px 4px 0px #111; transition: transform 0.05s, box-shadow 0.05s; }
     .record-card:active { transform: translate(4px, 4px); box-shadow: 0px 0px 0px #111; } 
     
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
@@ -37,30 +40,29 @@
     .card-info { color: #555; font-size: 0.9rem; margin: 4px 0; display: flex; gap: 10px; font-weight: 600; }
     
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; align-items: center; height: 70px; border-top: 2px solid #111; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-    .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: color 0.2s; }
+    .bottom-nav a { color: #888; text-decoration: none; font-size: 0.8rem; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: color 0.2s, transform 0.05s; }
+    .bottom-nav a:active { transform: scale(0.92); }
     .bottom-nav a.active { color: #2563EB; }
     
-    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: none; transition: transform 0.1s; }
-    .bottom-nav .add-btn:active { transform: translate(2px, 2px); }
+    .bottom-nav .add-btn { background: #2563EB; color: #fff !important; width: 56px; height: 56px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 28px; margin-top: -30px; border: 2px solid #111; box-shadow: 2px 2px 0px #111; transition: transform 0.05s, box-shadow 0.05s; }
+    .bottom-nav .add-btn:active { transform: translate(2px, -28px); box-shadow: 0px 0px 0px #111; }
 
     .empty-msg { text-align: center; color: #888; font-weight: 700; padding: 40px 0; }
   </style>
 </head>
-<body>
+<body ontouchstart="">
   <header>
     <h1>ROCK ARCHIVE</h1>
     <button class="user-tag" onclick="logout()" id="user-badge">👤 로그아웃</button>
   </header>
 
   <div class="content">
-    <!-- 초록색 요약 박스 (박스를 터치해도 연도 변경 가능) -->
     <div class="summary-box">
       <select id="box-year-select" class="box-year-select" title="연도 선택"></select>
       <p class="summary-title" id="summary-text">올해 공연에 태운 돈 💸</p>
       <strong id="total-price">₩ 0</strong>
     </div>
 
-    <!-- 하단 연/월 선택 필터 바 -->
     <div class="filter-bar">
       <select id="filter-year" class="filter-select"></select>
       <select id="filter-month" class="filter-select">
@@ -116,11 +118,10 @@
     let allGigs = [];
     const currentYear = new Date().getFullYear();
 
-    // 전 5년 ~ 후 1년 범위로 연도 드롭다운 옵션 세팅
     function initYearDropdowns() {
       let optionsHtml = '';
-      const startYear = currentYear + 1; // 내년 (+1년)
-      const endYear = currentYear - 5;   // 5년 전 (-5년)
+      const startYear = currentYear + 1;
+      const endYear = currentYear - 5;
 
       for (let y = startYear; y >= endYear; y--) {
         let label = `${y}년`;
@@ -168,8 +169,6 @@
     function updateDashboard() {
       const selectedYear = filterYear.value;
       const selectedMonth = filterMonth.value;
-
-      // 박스 선택값과 하단 필터 선택값 동기화
       boxYearSelect.value = selectedYear;
 
       let filteredGigs = allGigs.filter(gig => {
@@ -183,18 +182,15 @@
         return true;
       });
 
-      // 총 금액 계산
       let total = filteredGigs.reduce((sum, g) => sum + (Number(g.price) || 0), 0);
       totalPriceEl.innerText = `₩ ${total.toLocaleString()}`;
 
-      // 요약 텍스트 갱신
       if (selectedMonth === "all") {
         summaryText.innerText = (Number(selectedYear) === currentYear) ? "올해 공연에 태운 돈 💸" : `${selectedYear}년 공연에 태운 돈 💸`;
       } else {
         summaryText.innerText = `${selectedYear}년 ${Number(selectedMonth)}월에 태운 돈 💸`;
       }
 
-      // 리스트 렌더링
       if (filteredGigs.length === 0) {
         cardList.innerHTML = '<div class="empty-msg">해당 기간에 관람한 공연이 없습니다. 🎸</div>';
         return;
@@ -220,7 +216,6 @@
       cardList.innerHTML = html;
     }
 
-    // 초록색 박스 터치로 연도 변경 시 하단 필터도 함께 변경
     boxYearSelect.addEventListener('change', (e) => {
       filterYear.value = e.target.value;
       updateDashboard();
